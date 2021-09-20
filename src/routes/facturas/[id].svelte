@@ -3,6 +3,7 @@
   import { stores, goto } from "@sapper/app";
   import { bills, userData } from "../../lib/stores";
   import { POST } from "../../lib/functions";
+  import { Jellyfish } from "svelte-loading-spinners";
 
   const { page } = stores();
   let billData = $bills.filter((bill) => bill._id === $page.params.id)[0];
@@ -28,7 +29,10 @@
         link.click();
       };
       reader.readAsDataURL(res);
-      loading = false;
+
+      setTimeout(() => {
+        loading = false;
+      }, 1000);
     } catch (error) {
       console.log(error);
       alert("Algo ha salido mal. Vuelve a intentarlo");
@@ -146,8 +150,8 @@
       </div>
 
       {#if loading}
-        <div class="outer-loader col fcenter fill" transition:fade>
-          <img class="loader" src="/loader.svg" alt="Descargando PDF" />
+        <div class="outer-loader col fcenter fill" transition:fade={{ duration: 100 }}>
+          <Jellyfish size="100" color="#fff" unit="px" duration="5s" />
           <h3>Genarando PDF</h3>
         </div>
       {/if}
@@ -347,9 +351,8 @@
       backdrop-filter: blur(10px);
       pointer-events: none;
 
-      img {
-        width: 100px;
-        margin-bottom: 20px;
+      h3 {
+        margin-top: 20px;
       }
     }
   }
