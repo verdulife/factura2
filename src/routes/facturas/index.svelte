@@ -1,6 +1,7 @@
 <script>
-  import { userData, bills } from "../_helpers/stores";
-  import { tools, months } from "../../ui/utils";
+  import { userData, bills } from "../../lib/stores";
+  import { tools, months } from "../../lib/utils";
+  import { sortByNumber } from "../../lib/functions";
 
   let billsData = [...$bills];
   let searchTerm = "";
@@ -23,16 +24,7 @@
     return false;
   });
 
-  function sortByNumber(a, b) {
-    if (a.number < b.number) {
-      return -1;
-    }
-    if (a.number > b.number) {
-      return 1;
-    }
-    return 0;
-  }
-  $bills.sort(sortByNumber);
+  billsData.sort(sortByNumber);
 
   const years = () => {
     let yearsList = [];
@@ -43,28 +35,28 @@
 
     return yearsList;
   };
-  filterYear = Math.max(years());
-  
+  filterYear = Math.max(...years());
+
   function clearFilters() {
     searchTerm = "";
     filterMonth = "";
-    filterYear = Math.max(years());
+    filterYear = Math.max(...years());
   }
 </script>
 
 <svelte:head>
-  <title>Tus facturas | Facturas gratis</title>
-  <meta property="og:title" content="Tus facturas | Facturas gratis" />
+  <title>Facturas | Facturas gratis</title>
+  <meta property="og:title" content="Facturas | Facturas gratis" />
   <meta property="og:site_name" content="Facturas gratis" />
 
   <meta
     name="description"
-    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
   <meta
     property="og:description"
-    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
 </svelte:head>

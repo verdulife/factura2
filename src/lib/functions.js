@@ -1,3 +1,23 @@
+export function POST(body) {
+  return {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  };
+}
+
+export function sortByNumber(a, b) {
+  if (a.number > b.number) {
+    return -1;
+  }
+  if (a.number < b.number) {
+    return 1;
+  }
+  return 0;
+}
+
 export function roundWithTwoDecimals(num) {
   return Math.round((num + Number.EPSILON) * 100) / 100;
 }

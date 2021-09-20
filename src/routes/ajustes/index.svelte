@@ -1,7 +1,7 @@
 <script>
   import { goto } from "@sapper/app";
-  import { storageSpace } from "../_helpers/utils";
-  import { userData, bills, budgets, deliveries, clients, products, providers } from "../_helpers/stores";
+  import { storageSpace } from "../../lib/functions";
+  import { userData, bills, budgets, deliveries, clients, products, providers } from "../../lib/stores";
 
   $: user = $userData;
   let files;
@@ -35,7 +35,9 @@
       let reader = new FileReader();
 
       reader.onload = (e) => {
-        const { db_userData, db_bills, db_budgets, db_deliveries, db_clients, db_products, db_providers } = JSON.parse(e.target.result);
+        const { db_userData, db_bills, db_budgets, db_deliveries, db_clients, db_products, db_providers } = JSON.parse(
+          e.target.result
+        );
 
         $userData = db_userData;
         $bills = db_bills;
@@ -121,18 +123,18 @@
 </script>
 
 <svelte:head>
-  <title>Tus datos fiscales | Facturas gratis</title>
-  <meta property="og:title" content="Tus datos fiscales | Facturas gratis" />
+  <title>Ajustes | Facturas gratis</title>
+  <meta property="og:title" content="Ajustes | Facturas gratis" />
   <meta property="og:site_name" content="Facturas gratis" />
 
   <meta
     name="description"
-    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
   <meta
     property="og:description"
-    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
 </svelte:head>
@@ -143,7 +145,8 @@
     <p>
       En <b>facturagratis</b>, usamos tu navegador como disco.
       <br /><br />
-      Nuestra recomendacion es que descargues tus datos trimestalmente. Siempre podras volver a cargar tus datos y trabajar con ellos.
+      Nuestra recomendacion es que descargues tus datos trimestalmente. Siempre podras volver a cargar tus datos y trabajar
+      con ellos.
     </p>
 
     <!-- <div class="progress-bar col">
@@ -202,12 +205,26 @@
 
         <div class="input-wrapper col xfill">
           <label for="legal_name">Nombre fiscal 👈</label>
-          <input type="text" id="legal_name" bind:value={user.legal_name} class="xfill" placeholder="Ej. Factura Gratis S.L." required />
+          <input
+            type="text"
+            id="legal_name"
+            bind:value={user.legal_name}
+            class="xfill"
+            placeholder="Ej. Factura Gratis S.L."
+            required
+          />
         </div>
 
         <div class="input-wrapper col xfill">
           <label for="legal_id">CIF/NIF 👈</label>
-          <input type="text" id="legal_id" bind:value={user.legal_id} class="xfill" placeholder="Ej. B00011100" required />
+          <input
+            type="text"
+            id="legal_id"
+            bind:value={user.legal_id}
+            class="xfill"
+            placeholder="Ej. B00011100"
+            required
+          />
         </div>
       </div>
 
@@ -218,7 +235,14 @@
         <div class="row xfill">
           <div class="input-wrapper col xhalf">
             <label for="street">Dirección fiscal 👈</label>
-            <input type="text" id="street" bind:value={user.street} class="xfill" placeholder="Ej. Calle Mayor, 18" required />
+            <input
+              type="text"
+              id="street"
+              bind:value={user.street}
+              class="xfill"
+              placeholder="Ej. Calle Mayor, 18"
+              required
+            />
           </div>
 
           <div class="input-wrapper col xhalf">
@@ -251,7 +275,13 @@
 
         <div class="input-wrapper col xfill">
           <label for="email">Correo electrónico</label>
-          <input type="text" id="email" bind:value={user.email} class="xfill" placeholder="Ej. hola@facturagratis.com" />
+          <input
+            type="text"
+            id="email"
+            bind:value={user.email}
+            class="xfill"
+            placeholder="Ej. hola@facturagratis.com"
+          />
         </div>
       </div>
 
@@ -292,12 +322,22 @@
 
         <div class="input-wrapper col xfill">
           <label for="budget_note">Nota para presupuestos</label>
-          <textarea id="budget_note" bind:value={user.budget_note} class="xfill" placeholder="Ej. Transporte no incluido" />
+          <textarea
+            id="budget_note"
+            bind:value={user.budget_note}
+            class="xfill"
+            placeholder="Ej. Transporte no incluido"
+          />
         </div>
 
         <div class="input-wrapper col xfill">
           <label for="delivery_note">Nota para albarenes</label>
-          <textarea id="delivery_note" bind:value={user.delivery_note} class="xfill" placeholder="Ej. Transporte no incluido" />
+          <textarea
+            id="delivery_note"
+            bind:value={user.delivery_note}
+            class="xfill"
+            placeholder="Ej. Transporte no incluido"
+          />
         </div>
       </div>
 

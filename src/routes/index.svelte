@@ -1,5 +1,5 @@
 <script>
-  import { tools } from "../ui/utils";
+  import { tools } from "../lib/utils";
 </script>
 
 <svelte:head>
@@ -9,12 +9,12 @@
 
   <meta
     name="description"
-    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
   <meta
     property="og:description"
-    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
 </svelte:head>
@@ -22,7 +22,10 @@
 <div class="scroll">
   <section class="header col fcenter xfill">
     <h1>Herramientas online para gestionar tu negocio</h1>
-    <p>Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes, clientes, proveedores y productos/servicios. No se necesita instalación.</p>
+    <p>
+      Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+      clientes, proveedores y productos/servicios. No se necesita instalación.
+    </p>
   </section>
 
   <ul class="tools row jcenter xfill">

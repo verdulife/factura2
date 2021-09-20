@@ -1,5 +1,5 @@
 <script>
-  import { l } from "./_helpers/stores";
+  import { l } from "../lib/stores";
   import { content } from "./_content";
 
   export let status, error;

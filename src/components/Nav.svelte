@@ -1,8 +1,8 @@
 <script>
   import { slide } from "svelte/transition";
-  import { l, userData } from "../routes/_helpers/stores";
+  import { l, userData } from "../lib/stores";
+  import { tools } from "../lib/utils";
   import { content } from "./Nav.content";
-  import { tools } from "../ui/utils";
 
   export let segment;
   const ui = content[$l];

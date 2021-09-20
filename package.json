@@ -1,13 +1,9 @@
 {
-  "name": "verdu",
-  "description": "sapper template with verdu",
+  "name": "facturasgratis",
+  "description": "Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes, clientes, proveedores y productos/servicios.",
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "new:r": "node scripts/new.route",
-    "del:r": "node scripts/remove.route",
-    "new:c": "node scripts/new.component",
-    "del:c": "node scripts/remove.component",
     "dev": "sapper dev",
     "build": "sapper build --legacy",
     "export": "sapper export --legacy",

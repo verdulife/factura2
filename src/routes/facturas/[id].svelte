@@ -1,7 +1,7 @@
 <script>
-  import { stores } from "@sapper/app";
-  import { goto } from "@sapper/app";
-  import { bills, userData } from "../_helpers/stores";
+  import { stores, goto } from "@sapper/app";
+  import { bills, userData } from "../../lib/stores";
+  import { POST } from "../../lib/functions";
 
   const { page } = stores();
   let billData = $bills.filter((bill) => bill._id === $page.params.id)[0];
@@ -9,21 +9,22 @@
 
   async function downloadBill() {
     try {
-      const req = await fetch("/print", {
-        method: "POST",
-        "Content-Type": "application/json",
-        body: JSON.stringify(billData),
-      });
-
+      const data = { ...billData };
+      data.user = $userData;
+      
+      const req = await fetch("/print", POST(data));
       if (!req.ok) throw await req.text();
 
       const res = await req.blob();
-      const file = window.URL.createObjectURL(res);
-      const link = document.createElement("a");
+      const reader = new FileReader();
+      reader.onload = () => {
+        var link = document.createElement("a");
+        link.href = reader.result;
+        link.download = `Factura_${billData.number}_${billData.client.legal_id}.pdf`;
 
-      link.href = file;
-      link.download = `Factura_${billData.number}_${billData.client.legal_id}.pdf`;
-      link.click();
+        link.click();
+      };
+      reader.readAsDataURL(res);
     } catch (error) {
       console.log(error);
       alert("Algo ha salido mal. Vuelve a intentarlo");
@@ -35,7 +36,9 @@
   }
 
   function deleteBill() {
-    const check = confirm("La numeracion de las otras facturas no se modificara. Recuerda usar la numeracion de esta factura en otra.\n\n¿Borrar definitivamente?");
+    const check = confirm(
+      "La numeracion de las otras facturas no se modificara. Recuerda usar la numeracion de esta factura en otra.\n\n¿Borrar definitivamente?"
+    );
 
     if (check) {
       $bills.splice($bills.indexOf(billData), 1);
@@ -114,12 +117,12 @@
 
   <meta
     name="description"
-    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
   <meta
     property="og:description"
-    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
 </svelte:head>
@@ -157,7 +160,15 @@
             </div>
             <div class="input-wrapper date col">
               <label for="month">Mes</label>
-              <input type="number" id="month" min="1" max="12" class="xfill" bind:value={billData.date.month} required />
+              <input
+                type="number"
+                id="month"
+                min="1"
+                max="12"
+                class="xfill"
+                bind:value={billData.date.month}
+                required
+              />
             </div>
             <div class="input-wrapper date col">
               <label for="year">Año</label>
@@ -224,7 +235,14 @@
                 <input type="number" id="amount" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
                 <input type="text" id="label" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
                 <input type="number" id="dto" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
-                <input type="number" id="price" bind:value={item.price} step="0.01" class="out" placeholder="UNIDAD €" />
+                <input
+                  type="number"
+                  id="price"
+                  bind:value={item.price}
+                  step="0.01"
+                  class="out"
+                  placeholder="UNIDAD €"
+                />
                 <input type="text" value="x" class="out" on:click={() => removeLine(i)} />
               </li>
             {/each}

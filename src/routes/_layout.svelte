@@ -9,7 +9,7 @@
 </script>
 
 <script>
-  import { l } from "./_helpers/stores";
+  import { l } from "../lib/stores";
   import Nav from "../components/Nav.svelte";
 
   export let segment, locale;
