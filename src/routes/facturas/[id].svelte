@@ -1,4 +1,5 @@
 <script>
+  import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
   import { bills, userData } from "../../lib/stores";
   import { POST } from "../../lib/functions";
@@ -6,12 +7,14 @@
   const { page } = stores();
   let billData = $bills.filter((bill) => bill._id === $page.params.id)[0];
   let lineData = {};
+  let loading = false;
 
   async function downloadBill() {
     try {
+      loading = true;
       const data = { ...billData };
       data.user = $userData;
-      
+
       const req = await fetch("/print", POST(data));
       if (!req.ok) throw await req.text();
 
@@ -25,6 +28,7 @@
         link.click();
       };
       reader.readAsDataURL(res);
+      loading = false;
     } catch (error) {
       console.log(error);
       alert("Algo ha salido mal. Vuelve a intentarlo");
@@ -140,6 +144,13 @@
         <button class="link semi" on:click={generateDelivery}>GENERAR ALBARÁN</button>
         <button class="err semi" on:click={deleteBill}>ELIMINAR FACTURA</button>
       </div>
+
+      {#if loading}
+        <div class="outer-loader col fcenter fill" transition:fade>
+          <img class="loader" src="/loader.svg" alt="Descargando PDF" />
+          <h3>Genarando PDF</h3>
+        </div>
+      {/if}
     </section>
 
     <form class="bill-data col acenter xfill" on:submit|preventDefault={pushBill}>
@@ -326,6 +337,20 @@
 
     .io-wrapper {
       font-size: 12px;
+    }
+
+    .outer-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: rgba($black, 0.7);
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+
+      img {
+        width: 100px;
+        margin-bottom: 20px;
+      }
     }
   }
 
