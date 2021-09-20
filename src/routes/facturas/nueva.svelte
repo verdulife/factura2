@@ -1,6 +1,6 @@
 <script>
   import { goto } from '@sapper/app'
-  import { bills, userData } from "../../stores";
+  import { bills, userData } from "../../lib/stores";
 
   let billData = {};
   let lineData = {};

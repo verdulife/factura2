@@ -4,6 +4,7 @@
   import { bills, userData } from "../../lib/stores";
   import { POST } from "../../lib/functions";
   import { Jellyfish } from "svelte-loading-spinners";
+  import { saveAs } from 'file-saver';
 
   const { page } = stores();
   let billData = $bills.filter((bill) => bill._id === $page.params.id)[0];
@@ -20,15 +21,7 @@
       if (!req.ok) throw await req.text();
 
       const res = await req.blob();
-      const reader = new FileReader();
-      reader.onload = () => {
-        var link = document.createElement("a");
-        link.href = reader.result;
-        link.download = `Factura_${billData.number}_${billData.client.legal_id}.pdf`;
-
-        link.click();
-      };
-      reader.readAsDataURL(res);
+      saveAs(res, `Factura_${data.number}_${data.client.legal_id}.pdf`)
 
       setTimeout(() => {
         loading = false;
