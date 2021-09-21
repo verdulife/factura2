@@ -1,6 +1,6 @@
 <script>
   import { goto } from "@sapper/app";
-  import { storageSpace } from "../../lib/functions";
+  import { storageSpace, resizeImage } from "../../lib/functions";
   import { userData, bills, budgets, deliveries, clients, products, providers } from "../../lib/stores";
 
   $: user = $userData;
@@ -100,8 +100,9 @@
     let imageFile = files[0];
     let reader = new FileReader();
 
-    reader.onload = (e) => {
-      user.logo = e.target.result;
+    reader.onload = async (e) => {
+      console.log(e.target.result, await resizeImage(e.target.result));
+      user.logo = await resizeImage(e.target.result);
     };
 
     reader.readAsDataURL(imageFile);

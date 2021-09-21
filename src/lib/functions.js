@@ -8,6 +8,37 @@ export function POST(body) {
   };
 }
 
+export function resizeImage(base64Str, maxWidth = 400, maxHeight = 350) {
+  return new Promise((resolve) => {
+    let img = new Image();
+    img.src = base64Str;
+    img.onload = () => {
+      let canvas = document.createElement("canvas");
+      const MAX_WIDTH = maxWidth;
+      const MAX_HEIGHT = maxHeight;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width;
+          width = MAX_WIDTH;
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height;
+          height = MAX_HEIGHT;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      let ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL());
+    };
+  });
+}
+
 export function blobToBase64(blob) {
   return new Promise((resolve, _) => {
     const reader = new FileReader();
@@ -42,7 +73,10 @@ function totalStorage() {
   var i = 0;
   while (!error) {
     try {
-      localStorage.setItem("testKey" + i, "11111111112222222222333333333344444444445555555555666661111111111222222222233333333334444444444555555555566666");
+      localStorage.setItem(
+        "testKey" + i,
+        "11111111112222222222333333333344444444445555555555666661111111111222222222233333333334444444444555555555566666"
+      );
     } catch (e) {
       var error = e;
     }
@@ -69,6 +103,8 @@ function totalStorage() {
 
 if (process.browser) {
   /* storageSpace.total = totalStorage(); */
-  storageSpace.usage = roundWithTwoDecimals(new Blob(Object.values(localStorage)).size / 1024);
+  storageSpace.usage = roundWithTwoDecimals(
+    new Blob(Object.values(localStorage)).size / 1024
+  );
   /* storageSpace.percentage = roundWithTwoDecimals((storageSpace.usage / storageSpace.total) * 100); */
 }

@@ -23,7 +23,9 @@ export async function post(req, res) {
     },
   });
 
-  doc.font(process.env.NODE_ENV === "development" ? "static/fonts/fira.ttf" : "/fonts/fira.ttf").fontSize(8);
+  const reqFont = await fetch(req.headers.origin + "/fonts/fira.ttf");
+  const fira = await reqFont.arrayBuffer();
+  doc.font(fira).fontSize(8);
 
   if (req.headers.referer.includes("facturas")) {
     doc.svg(data.totals.ret > 0 ? bill_w_ret : bill_wo_ret, 0, 0, {
