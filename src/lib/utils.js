@@ -1,3 +1,5 @@
+export const iOS = process.browser && !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+
 export const tools = [
   {
     slug: "/facturas",

@@ -64,7 +64,7 @@ t. ${data.user.phone_prefix, data.user.phone} | e. ${data.user.email}`, mm(68), 
 
   res.statusCode = 200;
   res.setHeader("Content-type", "application/pdf");
-  res.setHeader("Content-disposition", `attachment; filename=${data.title}.pdf`);
+  res.setHeader("Content-Disposition", `attachment; filename="Factura_${data.number}_${data.client.legal_id}.pdf"`);
 
   doc.pipe(res);
 

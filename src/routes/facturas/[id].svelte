@@ -2,9 +2,7 @@
   import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
   import { bills, userData } from "../../lib/stores";
-  import { POST } from "../../lib/functions";
-  import { Jellyfish } from "svelte-loading-spinners";
-  import { saveAs } from 'file-saver';
+  import { POST, blobToBase64 } from "../../lib/functions";
 
   const { page } = stores();
   let billData = $bills.filter((bill) => bill._id === $page.params.id)[0];
@@ -21,7 +19,11 @@
       if (!req.ok) throw await req.text();
 
       const res = await req.blob();
-      saveAs(res, `Factura_${data.number}_${data.client.legal_id}.pdf`)
+      const file = await blobToBase64(res);
+      const link = document.createElement("a");
+      link.href = file;
+      link.download = `Factura_${data.number}_${data.client.legal_id}.pdf`;
+      link.click();
 
       setTimeout(() => {
         loading = false;
@@ -144,7 +146,7 @@
 
       {#if loading}
         <div class="outer-loader col fcenter fill" transition:fade={{ duration: 100 }}>
-          <Jellyfish size="100" color="#fff" unit="px" duration="5s" />
+          <img src="/loader.svg" alt="Generando PDF" />
           <h3>Genarando PDF</h3>
         </div>
       {/if}
@@ -344,8 +346,9 @@
       backdrop-filter: blur(10px);
       pointer-events: none;
 
-      h3 {
-        margin-top: 20px;
+      img {
+        width: 100px;
+        margin-bottom: 20px;
       }
     }
   }
