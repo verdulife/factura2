@@ -62,8 +62,15 @@
     return result;
   };
 
+  function autoFillClient() {
+    const client_id = billData.client.legal_name;
+    billData.client = $clients.filter((client) => client.legal_id === client_id)[0];
+  }
+
   function pushClient(client) {
     if ($clients.some((c) => c.legal_id === client.legal_id)) return;
+
+    client._id = Date.now().toString();
     $clients = [...$clients, client];
     console.log("Añadido nuevo cliente");
   }
@@ -141,7 +148,12 @@
 
       <div class="input-wrapper col xfill">
         <label for="legal_name">NOMBRE FISCAL</label>
-        <input type="text" id="leagal_name" bind:value={billData.client.legal_name} class="xfill" required />
+        <input type="text" list="clientsList" id="leagal_name" bind:value={billData.client.legal_name} class="xfill" on:change={autoFillClient} required />
+        <datalist id="clientsList">
+          {#each $clients as client}
+            <option value={client.legal_id}>{client.legal_name}</option>
+          {/each}
+        </datalist>
       </div>
 
       <div class="row xfill">

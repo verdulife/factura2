@@ -1,7 +1,10 @@
-import fetch from "node-fetch"
+import fetch from "node-fetch";
 import PDFDocument from "pdfkit";
 import SVGtoPDF from "svg-to-pdfkit";
-import { bill } from "./assets/bill.svg";
+import { bill_w_ret } from "./assets/bill_w_ret.svg";
+import { bill_wo_ret } from "./assets/bill_wo_ret.svg";
+import { budget_w_ret } from "./assets/budget_w_ret.svg";
+import { budget_wo_ret } from "./assets/budget_wo_ret.svg";
 
 PDFDocument.prototype.svg = function (svg, x, y, options) {
   return SVGtoPDF(this, svg, x, y, options), this;
@@ -20,22 +23,32 @@ export async function post(req, res) {
     },
   });
 
-  const font_req = (await fetch(req.headers.origin + "/fira.ttf")) || (await fetch(req.headers.origin + "/static/fira.ttf"));
-  const font = await font_req.arrayBuffer();
-  doc.font(font).fontSize(8);
+  doc.font(process.env.NODE_ENV === "development" ? "static/fonts/fira.ttf" : "/fonts/fira.ttf").fontSize(8);
+
+  if (req.headers.referer.includes("facturas")) {
+    doc.svg(data.totals.ret > 0 ? bill_w_ret : bill_wo_ret, 0, 0, {
+      width: mm(210),
+      height: mm(297),
+    });
+  } else {
+    doc.svg(data.totals.ret > 0 ? budget_w_ret : budget_wo_ret, 0, 0, {
+      width: mm(210),
+      height: mm(297),
+    });
+  }
 
   doc.image(data.user.logo, mm(25), mm(23), { fit: [mm(40), mm(25)], align: "center", valign: "center" });
 
-  doc.text(`${data.user.legal_name} | ${data.user.legal_id}
+  doc.text(
+    `${data.user.legal_name} | ${data.user.legal_id}
 ${data.user.address}, ${data.user.cp} ${data.user.city} (${data.user.country})
-t. ${data.user.phone_prefix, data.user.phone} | e. ${data.user.email}`, mm(68), mm(30), {
-    width: mm(95),
-  });
-
-  doc.svg(bill, 0, 0, {
-    width: mm(210),
-    height: mm(297),
-  });
+t. ${(data.user.phone_prefix, data.user.phone)} | e. ${data.user.email}`,
+    mm(68),
+    mm(30),
+    {
+      width: mm(95),
+    }
+  );
 
   doc.text(data.number, mm(168), mm(31));
   doc.text(`${data.date.day}/${data.date.month}/${data.date.year}`, mm(168), mm(36));
