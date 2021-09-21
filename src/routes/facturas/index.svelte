@@ -35,7 +35,6 @@
 
     return yearsList;
   };
-  filterYear = Math.max(...years());
 
   function clearFilters() {
     searchTerm = "";

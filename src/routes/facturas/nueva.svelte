@@ -1,6 +1,6 @@
 <script>
-  import { goto } from '@sapper/app'
-  import { bills, userData } from "../../lib/stores";
+  import { goto } from "@sapper/app";
+  import { userData, bills, clients } from "../../lib/stores";
 
   let billData = {};
   let lineData = {};
@@ -62,6 +62,12 @@
     return result;
   };
 
+  function pushClient(client) {
+    if ($clients.some((c) => c.legal_id === client.legal_id)) return;
+    $clients = [...$clients, client];
+    console.log("Añadido nuevo cliente");
+  }
+
   function pushBill() {
     if (billData.items.length > 0) {
       billData._id = Date.now().toString();
@@ -73,6 +79,7 @@
       };
 
       $bills = [...$bills, billData];
+      pushClient(billData.client);
       goto("/facturas");
     } else alert("⚠ No has añadido ningun concepto ⚠");
   }

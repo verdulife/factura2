@@ -10,8 +10,8 @@
   let loading = false;
 
   async function downloadBill() {
+    loading = true;
     try {
-      loading = true;
       const data = { ...billData };
       data.user = $userData;
 
@@ -30,6 +30,7 @@
       }, 1000);
     } catch (error) {
       console.log(error);
+      loading = false;
       alert("Algo ha salido mal. Vuelve a intentarlo");
     }
   }
