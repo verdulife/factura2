@@ -1,6 +1,6 @@
 <script>
   import { goto } from "@sapper/app";
-  import { userData, bills, clients } from "../../lib/stores";
+  import { userData, bills, clients, products } from "../../lib/stores";
 
   let billData = {};
   let lineData = {};
@@ -62,17 +62,24 @@
     return result;
   };
 
-  function autoFillClient() {
-    const client_id = billData.client.legal_name;
-    billData.client = $clients.filter((client) => client.legal_id === client_id)[0];
-  }
-
   function pushClient(client) {
     if ($clients.some((c) => c.legal_id === client.legal_id)) return;
 
     client._id = Date.now().toString();
     $clients = [...$clients, client];
-    console.log("Añadido nuevo cliente");
+  }
+
+  function pushProduct(items) {
+    for (let i = 0; i < items.length; i++) {
+      let product = { ...items[i] };
+      if ($products.some((p) => p.label === product.label)) return;
+
+      delete product.amount;
+      delete product.dto;
+      product._id = Date.now().toString();
+
+      $products = [...$products, product];
+    }
   }
 
   function pushBill() {
@@ -86,7 +93,10 @@
       };
 
       $bills = [...$bills, billData];
+
       pushClient(billData.client);
+      pushProduct(billData.items);
+
       goto("/facturas");
     } else alert("⚠ No has añadido ningun concepto ⚠");
   }
@@ -146,14 +156,21 @@
       <h2>Datos del cliente</h2>
       <p class="notice">Cada vez que añadas un cliente nuevo, este se guardara automatiamente.</p>
 
+      {#if $clients.length > 0}
+        <div class="input-wrapper col xfill">
+          <label for="legal_name" style="margin-bottom: 10px">CARGAR DATOS</label>
+          <select class="select-user xfill" id="clients_list" bind:value={billData.client}>
+            <option value={billData.client} disabled>Seleccionar cliente</option>
+            {#each $clients as client}
+              <option value={client}>{client.legal_name} - {client.legal_id}</option>
+            {/each}
+          </select>
+        </div>
+      {/if}
+
       <div class="input-wrapper col xfill">
         <label for="legal_name">NOMBRE FISCAL</label>
-        <input type="text" list="clientsList" id="leagal_name" bind:value={billData.client.legal_name} class="xfill" on:change={autoFillClient} required />
-        <datalist id="clientsList">
-          {#each $clients as client}
-            <option value={client.legal_id}>{client.legal_name}</option>
-          {/each}
-        </datalist>
+        <input type="text" id="leagal_name" bind:value={billData.client.legal_name} class="xfill" required />
       </div>
 
       <div class="row xfill">
@@ -311,6 +328,10 @@
       @media (max-width: $mobile) {
         margin-bottom: 20px;
       }
+    }
+
+    .select-user {
+      border: 1px solid $border;
     }
 
     label {
