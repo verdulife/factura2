@@ -21,7 +21,7 @@
       const res = await req.blob();
       const blob = URL.createObjectURL(res);
 
-      const frame = document.createElement("iframe");
+      /* const frame = document.createElement("iframe");
       frame.src = blob;
       frame.style.cssText = `
         position: fixed;
@@ -30,12 +30,12 @@
         width: 40%;
         height: 100%;
       `;
-      document.body.appendChild(frame);
+      document.body.appendChild(frame); */
 
-      /* const link = document.createElement("a");
+      const link = document.createElement("a");
       link.href = blob;
       link.download = `Factura_${data.number}_${data.client.legal_id}.pdf`;
-      link.click(); */
+      link.click();
 
       setTimeout(() => {
         loading = false;
