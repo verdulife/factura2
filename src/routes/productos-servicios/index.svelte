@@ -38,6 +38,7 @@
 
 <div class="scroll">
   <section class="header col fcenter xfill">
+    <img src="/productos-servicios.svg" alt="Productos y servicios">
     <h1>{tools[4].title}</h1>
     <p>{tools[4].desc}</p>
   </section>
@@ -57,7 +58,7 @@
     </div>
 
     <ul class="bill-list col acenter xfill">
-      {#if filteredProducts.length <= 0}
+      {#if filteredProducts.length <= 0 && productsData.length > 0}
         <p>No hay coincidencias</p>
       {/if}
 
@@ -94,9 +95,14 @@
       padding: 40px;
     }
 
+    img {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+
     h1 {
       max-width: 900px;
-      font-size: 6vh;
+      font-size: 5vh;
       line-height: 1;
       margin-bottom: 20px;
 

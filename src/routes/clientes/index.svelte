@@ -37,6 +37,7 @@
 
 <div class="scroll">
   <section class="header col fcenter xfill">
+    <img src="/clientes.svg" alt="Clientes" />
     <h1>{tools[3].title}</h1>
     <p>{tools[3].desc}</p>
   </section>
@@ -44,19 +45,29 @@
   {#if $userData.legal_name !== undefined}
     <div class="list-filter col acenter xfill">
       {#if clientsData.length <= 0}
-        <a class="btn succ semi" href="/clientes/nueva">CREA TU PRIMER CLIENTE</a>
+        <a class="btn succ semi" href="/clientes/nueva"
+          >CREA TU PRIMER CLIENTE</a
+        >
       {:else}
-        <a class="new-btn btn succ semi" href="/clientes/nueva">NUEVO CLIENTE</a>
+        <a class="new-btn btn succ semi" href="/clientes/nueva">NUEVO CLIENTE</a
+        >
 
         <div class="filter-wrapper row xfill">
-          <input type="text" class="out grow" bind:value={searchTerm} placeholder="Buscar por nombre o CIF/NIF" />
-          <div class="clear-btn row acenter" on:click={clearFilters}>LIMPIAR FILTROS</div>
+          <input
+            type="text"
+            class="out grow"
+            bind:value={searchTerm}
+            placeholder="Buscar por nombre o CIF/NIF"
+          />
+          <div class="clear-btn row acenter" on:click={clearFilters}>
+            LIMPIAR FILTROS
+          </div>
         </div>
       {/if}
     </div>
 
     <ul class="bill-list col acenter xfill">
-      {#if filteredClients.length <= 0}
+      {#if filteredClients.length <= 0 && clientsData.length > 0}
         <p>No hay coincidencias</p>
       {/if}
 
@@ -72,7 +83,10 @@
 
             <div class="info row jbetween xfill">
               <p>
-                Contacto: <a href={(client.contact.includes("@") ? "mailto:" : "tel:") + client.contact}><b>{client.contact}</b></a>
+                Contacto: <a
+                  href={(client.contact.includes("@") ? "mailto:" : "tel:") +
+                    client.contact}><b>{client.contact}</b></a
+                >
               </p>
             </div>
           </a>
@@ -83,7 +97,10 @@
   {:else}
     <div class="first col acenter xfill">
       <h2>Primeros pasos</h2>
-      <p>Para poder empezar a generar clientes, primero tienes que rellenar tus datos</p>
+      <p>
+        Para poder empezar a generar clientes, primero tienes que rellenar tus
+        datos
+      </p>
       <br />
       <a href="/ajustes" class="btn pri semi">RELLENAR DATOS</a>
     </div>
@@ -101,9 +118,14 @@
       padding: 40px;
     }
 
+    img {
+      width: 100px;
+      margin-bottom: 20px;
+    }
+
     h1 {
       max-width: 900px;
-      font-size: 6vh;
+      font-size: 5vh;
       line-height: 1;
       margin-bottom: 20px;
 

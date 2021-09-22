@@ -142,25 +142,13 @@
 
 <div class="scroll">
   <section class="header col fcenter xfill">
-    <h1>Tus datos de facturación</h1>
+    <h1>Tus datos</h1>
     <p>
       En <b>facturagratis</b>, usamos tu navegador como disco.
       <br /><br />
       Nuestra recomendacion es que descargues tus datos trimestalmente. Siempre podras volver a cargar tus datos y trabajar
       con ellos.
     </p>
-
-    <!-- <div class="progress-bar col">
-      <div class="bar" style="width: {storageSpace.percentage}%" />
-    </div> -->
-
-    <!-- {#if !storageSpace.percentage}
-      <p>Calculando...</p>
-    {:else}
-      <p>
-        <b>{storageSpace.percentage}%</b> del espacio de tu navegador usado
-      </p>
-      {/if} -->
 
     {#if user && user.legal_id}
       <p>
@@ -363,7 +351,7 @@
 
     h1 {
       max-width: 900px;
-      font-size: 6vh;
+      font-size: 5vh;
       line-height: 1;
       margin-bottom: 40px;
 
@@ -380,22 +368,6 @@
 
       @media (max-width: $mobile) {
         font-size: 14px;
-      }
-    }
-
-    .progress-bar {
-      width: 80%;
-      max-width: 300px;
-      height: 10px;
-      background: $sec;
-      border: 1px solid $border;
-      border-radius: 5px;
-      margin-bottom: 10px;
-      overflow: hidden;
-
-      .bar {
-        height: 100%;
-        background: $success;
       }
     }
 
@@ -491,6 +463,7 @@
       cursor: pointer;
       display: block;
       background-color: $pri;
+      text-align: center;
       font-size: 12px;
       font-weight: bold;
       color: $white;
@@ -504,6 +477,12 @@
 
       &:hover {
         transform: scale(0.95);
+      }
+
+      @media (max-width: $mobile) {
+        width: 200px;
+        margin: 0 auto 10px auto;
+
       }
     }
 

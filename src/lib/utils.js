@@ -27,7 +27,7 @@ export const tools = [
   },
   {
     slug: "/productos-servicios",
-    title: "Productos/Servicios",
+    title: "Productos y servicios",
     desc: "Crea una lista de productos/servicios. Podrás usarlos en tus facturas, presupuestos y/o albaranes.",
     icon: "productos-servicios.svg",
   },

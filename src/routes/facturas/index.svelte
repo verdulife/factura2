@@ -62,6 +62,7 @@
 
 <div class="scroll">
   <section class="header col fcenter xfill">
+    <img src="/facturas.svg" alt="Facturas">
     <h1>{tools[0].title}</h1>
     <p>{tools[0].desc}</p>
   </section>
@@ -96,7 +97,7 @@
     </div>
 
     <ul class="bill-list col acenter xfill">
-      {#if filteredBills.length <= 0}
+      {#if filteredBills.length <= 0 && billsData.length > 0}
         <p>No hay coincidencias</p>
       {/if}
 
@@ -112,11 +113,10 @@
               <h3>{bill.totals.total.toFixed(2)}€</h3>
             </div>
 
-            <div class="info row jbetween xfill">
+            <div class="info row xfill">
               <p>
-                Nº de factura: <b>{bill.number}</b> | Fecha: <b>{bill.date.day}/{bill.date.month}/{bill.date.year}</b>
+                Nº<b>{bill.number}</b> | Fecha: <b>{bill.date.day}/{bill.date.month}/{bill.date.year}</b>
               </p>
-              <p><b>{bill.items.length}</b> conceptos</p>
             </div>
           </a>
         </li>
@@ -142,6 +142,11 @@
 
     @media (max-width: $mobile) {
       padding: 40px;
+    }
+
+    img {
+      width: 100px;
+      margin-bottom: 20px;
     }
 
     h1 {
