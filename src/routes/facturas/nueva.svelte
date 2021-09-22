@@ -19,10 +19,24 @@
   billData.items = [];
 
   function pushLine() {
-    if (Object.keys(lineData).length === 4) {
-      billData.items = [...billData.items, lineData];
-      lineData = {};
+    //TODO: change alerts for shake red animation
+
+    if (lineData.amount === undefined) {
+      alert("No hay una catidad definida para añadir la linea");
+      return;
     }
+    if (lineData.label === undefined) {
+      alert("No hay un concepto definido para añadir la linea");
+      return;
+    }
+    if (lineData.price === undefined) {
+      alert("No hay un precio unitario definido para añadir la linea");
+      return;
+    }
+
+    lineData.dto = lineData.dto || 0;
+    billData.items = [...billData.items, lineData];
+    lineData = {};
   }
 
   function removeLine(i) {
