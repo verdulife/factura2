@@ -172,7 +172,7 @@
 
       {#if $clients.length > 0}
         <div class="input-wrapper col xfill">
-          <label for="legal_name" style="margin-bottom: 10px">CARGAR DATOS</label>
+          <label for="clients_list" style="margin-bottom: 10px">CARGAR DATOS</label>
           <select class="select-user xfill" id="clients_list" bind:value={billData.client}>
             <option value={billData.client} disabled>Seleccionar cliente</option>
             {#each $clients as client}
@@ -268,6 +268,18 @@
         </ul>
 
         <h-div />
+      {/if}
+
+      {#if $clients.length > 0}
+        <div class="input-wrapper col xfill">
+          <label for="products_list" style="margin-bottom: 10px">CARGAR DATOS</label>
+          <select class="select-user xfill" id="products_list" bind:value={lineData}>
+            <option value={lineData} disabled>Seleccionar producto</option>
+            {#each $products as product}
+              <option value={product}>{product.label} - {product.price}</option>
+            {/each}
+          </select>
+        </div>
       {/if}
 
       <div class="new-line row xfill">
