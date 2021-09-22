@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
   import { bills, userData } from "../../lib/stores";
-  import { POST, blobToBase64 } from "../../lib/functions";
+  import { POST } from "../../lib/functions";
 
   const { page } = stores();
   let billData = $bills.filter((bill) => bill._id === $page.params.id)[0];
@@ -20,10 +20,22 @@
 
       const res = await req.blob();
       const blob = URL.createObjectURL(res);
-      const link = document.createElement("a");
+
+      const frame = document.createElement("iframe");
+      frame.src = blob;
+      frame.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 40%;
+        height: 100%;
+      `;
+      document.body.appendChild(frame);
+
+      /* const link = document.createElement("a");
       link.href = blob;
       link.download = `Factura_${data.number}_${data.client.legal_id}.pdf`;
-      link.click();
+      link.click(); */
 
       setTimeout(() => {
         loading = false;

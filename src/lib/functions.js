@@ -61,12 +61,19 @@ export function roundWithTwoDecimals(num) {
   return Math.round((num + Number.EPSILON) * 100) / 100;
 }
 
+export function numerationFormat(num) {
+  const length = `${num}`.length;
+  if (length === 1) return `0000${num}`;
+  if (length === 2) return `000${num}`;
+  if (length === 3) return `00${num}`;
+  if (length === 4) return `0${num}`;
+  return `${num}`;
+}
+
 export let storageSpace = {
   usage: 0,
 };
 
 if (process.browser) {
-  storageSpace.usage = roundWithTwoDecimals(
-    new Blob(Object.values(localStorage)).size / 1024
-  );
+  storageSpace.usage = roundWithTwoDecimals(new Blob(Object.values(localStorage)).size / 1024);
 }
