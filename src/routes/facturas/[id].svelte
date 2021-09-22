@@ -19,9 +19,9 @@
       if (!req.ok) throw await req.text();
 
       const res = await req.blob();
-      const file = await blobToBase64(res);
+      const blob = URL.createObjectURL(res);
       const link = document.createElement("a");
-      link.href = file;
+      link.href = blob;
       link.download = `Factura_${data.number}_${data.client.legal_id}.pdf`;
       link.click();
 
