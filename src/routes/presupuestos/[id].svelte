@@ -3,11 +3,10 @@
   import { stores, goto } from "@sapper/app";
   import { budgets, userData, bills } from "../../lib/stores";
   import { POST } from "../../lib/functions";
+  import { toast } from "../../components/toaster";
 
   const { page } = stores();
-  let budgetData = $budgets.filter(
-    (budget) => budget._id === $page.params.id
-  )[0];
+  let budgetData = $budgets.filter((budget) => budget._id === $page.params.id)[0];
   let lineData = {};
   let loading = false;
 
@@ -52,9 +51,7 @@
   }
 
   function generateBill() {
-    const check = confirm(
-      "¿Quieres crear una facturar a partir de este presupuesto?"
-    );
+    const check = confirm("¿Quieres crear una facturar a partir de este presupuesto?");
 
     if (!check) return;
 
@@ -63,10 +60,8 @@
     const billExists = $bills.some((b) => b._id === bill._id);
 
     if (billExists) {
-      const check = confirm(
-        "Ya se ha creado factura a partir de este presupuesto\n\n¿Quieres abrirla?"
-      );
-      
+      const check = confirm("Ya se ha creado factura a partir de este presupuesto\n\n¿Quieres abrirla?");
+
       if (!check) return;
 
       return goto(`/facturas/${bill._id}`);
@@ -79,9 +74,7 @@
   }
 
   function deleteBudget() {
-    const check = comfirm(
-      "La numeracion de los otros presupuestos no se modificara. Recuerda usar la numeracion de este presupuesto en otro.\n\n¿Borrar definitivamente?"
-    );
+    const check = comfirm("La numeracion de los otros presupuestos no se modificara. Recuerda usar la numeracion de este presupuesto en otro.\n\n¿Borrar definitivamente?");
 
     if (check) {
       $budgets.splice($budgets.indexOf(budgetData), 1);
@@ -148,7 +141,7 @@
         else return budget;
       });
 
-      goto("/presupuestos");
+      toast("✔ Datos guardados correctamente");
     } else alert("⚠ No has añadido ningun concepto ⚠");
   }
 </script>
@@ -176,90 +169,46 @@
       <img src="/presupuestos.svg" alt="Presupuestos" />
       <h1>Presupuesto nº {budgetData.number}</h1>
       <p>
-        Con fecha {budgetData.date.day}/{budgetData.date.month}/{budgetData.date
-          .year}
+        Con fecha {budgetData.date.day}/{budgetData.date.month}/{budgetData.date.year}
       </p>
 
       <div class="io-wrapper row jcenter xfill">
-        <button class="succ semi" on:click={downloadBudget}
-          >DESCARGAR PRESUPUESTO</button
-        >
-        <button class="link semi" on:click={generateBill}
-          >GENERAR FACTURA</button
-        >
-        <button class="err semi" on:click={deleteBudget}
-          >ELIMINAR PRESUPUESTO</button
-        >
+        <button class="succ semi" on:click={downloadBudget}>DESCARGAR PRESUPUESTO</button>
+        <button class="link semi" on:click={generateBill}>GENERAR FACTURA</button>
+        <button class="err semi" on:click={deleteBudget}>ELIMINAR PRESUPUESTO</button>
       </div>
 
       {#if loading}
-        <div
-          class="outer-loader col fcenter fill"
-          transition:fade={{ duration: 100 }}
-        >
+        <div class="outer-loader col fcenter fill" transition:fade={{ duration: 100 }}>
           <img src="/loader.svg" alt="Generando PDF" />
           <h3>Genarando PDF</h3>
         </div>
       {/if}
     </section>
 
-    <form
-      class="budget-data col acenter xfill"
-      on:submit|preventDefault={pushBudget}
-    >
+    <form class="budget-data col acenter xfill" on:submit|preventDefault={pushBudget}>
       <div class="box round col xfill">
         <h2>Datos del presupuesto</h2>
-        <p class="notice">
-          La numeración y fecha del presupuesto se rellenan automatiamente, pero
-          puedes modificarlos.
-        </p>
+        <p class="notice">La numeración y fecha del presupuesto se rellenan automatiamente, pero puedes modificarlos.</p>
 
         <div class="row xfill">
           <div class="input-wrapper col grow">
             <label for="legal_name">Número</label>
-            <input
-              type="number"
-              id="legal_name"
-              class="xfill"
-              bind:value={budgetData.number}
-              required
-            />
+            <input type="number" id="legal_name" class="xfill" bind:value={budgetData.number} required />
           </div>
 
           <div class="date-row row xhalf">
             <div class="input-wrapper date col">
               <label for="day">Día</label>
-              <input
-                type="number"
-                id="day"
-                min="1"
-                max="31"
-                class="xfill"
-                bind:value={budgetData.date.day}
-                required
-              />
+              <input type="number" id="day" min="1" max="31" class="xfill" bind:value={budgetData.date.day} required />
             </div>
             <div class="input-wrapper date col">
               <label for="month">Mes</label>
-              <input
-                type="number"
-                id="month"
-                min="1"
-                max="12"
-                class="xfill"
-                bind:value={budgetData.date.month}
-                required
-              />
+              <input type="number" id="month" min="1" max="12" class="xfill" bind:value={budgetData.date.month} required />
             </div>
             <div class="input-wrapper date col">
               <label for="year">Año</label>
-              <input
-                type="number"
-                id="year"
-                class="xfill"
-                bind:value={budgetData.date.year}
-                required
-              />
+              <input type="number" id="year" class="xfill" bind:value={budgetData.date.year} required />
             </div>
           </div>
         </div>
@@ -267,143 +216,63 @@
 
       <div class="box round col xfill">
         <h2>Datos del cliente</h2>
-        <p class="notice">
-          Cada vez que añadas un cliente nuevo, este se guardara automatiamente.
-        </p>
+        <p class="notice">Cada vez que añadas un cliente nuevo, este se guardara automatiamente.</p>
 
         <div class="input-wrapper col xfill">
           <label for="legal_name">NOMBRE FISCAL</label>
-          <input
-            type="text"
-            id="leagal_name"
-            bind:value={budgetData.client.legal_name}
-            class="xfill"
-            required
-          />
+          <input type="text" id="leagal_name" bind:value={budgetData.client.legal_name} class="xfill" required />
         </div>
 
         <div class="row xfill">
           <div class="input-wrapper col xhalf">
             <label for="legal_id">CIF/NIF</label>
-            <input
-              type="text"
-              id="leagal_id"
-              bind:value={budgetData.client.legal_id}
-              class="xfill"
-              required
-            />
+            <input type="text" id="leagal_id" bind:value={budgetData.client.legal_id} class="xfill" required />
           </div>
 
           <div class="input-wrapper col xhalf">
             <label for="contact">Conacto</label>
-            <input
-              type="text"
-              id="contact"
-              bind:value={budgetData.client.contact}
-              class="xfill"
-              required
-            />
+            <input type="text" id="contact" bind:value={budgetData.client.contact} class="xfill" required />
           </div>
         </div>
 
         <div class="row xfill">
           <div class="input-wrapper col xhalf">
             <label for="address">DIRECCION FISCAL</label>
-            <input
-              type="text"
-              id="address"
-              bind:value={budgetData.client.address}
-              class="xfill"
-              required
-            />
+            <input type="text" id="address" bind:value={budgetData.client.address} class="xfill" required />
           </div>
 
           <div class="col xhalf">
             <label for="cp">Código postal</label>
-            <input
-              type="text"
-              id="cp"
-              bind:value={budgetData.client.cp}
-              class="xfill"
-              required
-            />
+            <input type="text" id="cp" bind:value={budgetData.client.cp} class="xfill" required />
           </div>
         </div>
 
         <div class="row xfill">
           <div class="input-wrapper col xhalf">
             <label for="city">POBLACIÓN</label>
-            <input
-              type="text"
-              id="city"
-              bind:value={budgetData.client.city}
-              class="xfill"
-              required
-            />
+            <input type="text" id="city" bind:value={budgetData.client.city} class="xfill" required />
           </div>
 
           <div class="input-wrapper col xhalf">
             <label for="country">País</label>
-            <input
-              type="text"
-              id="country"
-              bind:value={budgetData.client.country}
-              class="xfill"
-              required
-            />
+            <input type="text" id="country" bind:value={budgetData.client.country} class="xfill" required />
           </div>
         </div>
       </div>
 
       <div class="box round col xfill">
         <h2>Conceptos</h2>
-        <p class="notice">
-          Cada vez que añadas un producto/servicio nuevo, este se guardara
-          automatiamente.
-        </p>
+        <p class="notice">Cada vez que añadas un producto/servicio nuevo, este se guardara automatiamente.</p>
 
         {#if budgetData.items.length > 0}
           <ul class="budget-items col acenter xfill">
             {#each budgetData.items as item, i}
               <li class="line row xfill">
-                <input
-                  type="number"
-                  id="amount"
-                  bind:value={item.amount}
-                  min="1"
-                  class="out"
-                  placeholder="CANT"
-                />
-                <input
-                  type="text"
-                  id="label"
-                  bind:value={item.label}
-                  class="out grow"
-                  placeholder="CONCEPTO"
-                />
-                <input
-                  type="number"
-                  id="dto"
-                  bind:value={item.dto}
-                  min="0"
-                  max="100"
-                  class="out"
-                  placeholder="DTO %"
-                />
-                <input
-                  type="number"
-                  id="price"
-                  bind:value={item.price}
-                  step="0.01"
-                  class="out"
-                  placeholder="UNIDAD €"
-                />
-                <input
-                  type="text"
-                  value="x"
-                  class="out"
-                  on:click={() => removeLine(i)}
-                />
+                <input type="number" id="amount" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
+                <input type="text" id="label" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
+                <input type="number" id="dto" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
+                <input type="number" id="price" bind:value={item.price} step="0.01" class="out" placeholder="UNIDAD €" />
+                <input type="text" value="x" class="out" on:click={() => removeLine(i)} />
               </li>
             {/each}
           </ul>
@@ -438,49 +307,19 @@
         {/if}
 
         <div class="new-line row xfill">
-          <input
-            type="number"
-            id="amount"
-            bind:value={lineData.amount}
-            min="1"
-            class="out"
-            placeholder="CANT"
-          />
-          <input
-            type="text"
-            id="label"
-            bind:value={lineData.label}
-            class="out grow"
-            placeholder="CONCEPTO"
-          />
-          <input
-            type="number"
-            id="dto"
-            bind:value={lineData.dto}
-            min="0"
-            max="100"
-            class="out"
-            placeholder="DTO %"
-          />
-          <input
-            type="number"
-            id="price"
-            bind:value={lineData.price}
-            step="0.01"
-            class="out"
-            placeholder="UNIDAD €"
-          />
+          <input type="number" id="amount" bind:value={lineData.amount} min="1" class="out" placeholder="CANT" />
+          <input type="text" id="label" bind:value={lineData.label} class="out grow" placeholder="CONCEPTO" />
+          <input type="number" id="dto" bind:value={lineData.dto} min="0" max="100" class="out" placeholder="DTO %" />
+          <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="UNIDAD €" />
         </div>
 
-        <div class="line-btn pri xfill" on:click={pushLine}>
-          AÑADIR PRODUCTO/SERVICIO
-        </div>
+        <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR PRODUCTO/SERVICIO</div>
       </div>
 
       <div class="box round col xfill">
         <h2>Notas</h2>
         <p class="notice">Si tienes que añadir o modificar la nota, este es el lugar.</p>
-  
+
         <div class="input-wrapper col xfill">
           <label for="note">Notas</label>
           <textarea id="note" bind:value={budgetData.note} class="xfill" placeholder="Ej. Transporte no incluido" />
@@ -489,7 +328,7 @@
 
       <div class="row jcenter xfill">
         <button class="succ semi">GUARDAR CAMBIOS</button>
-        <a href="/presupuestos" class="btn out semi">CANCELAR</a>
+        <a href="/presupuestos" class="btn out semi">ATRAS</a>
       </div>
     </form>
   {/if}

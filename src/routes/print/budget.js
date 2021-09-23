@@ -85,12 +85,14 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${data.user.email ? "| e. " + d
     doc.fillColor("#fff").text(`${roundWithTwoDecimals(data.totals.total).toFixed(2)}${data.user.currency}`, mm(137), mm(238));
   }
 
-  doc.fillColor("#000").text(data.user.bill_note, mm(27), mm(258), {
-    width: mm(156),
-    height: mm(12.5),
-    align: "center",
-    ellipsis: true,
-  });
+  if (data.note) {
+    doc.fillColor("#000").text(data.note, mm(27), mm(258), {
+      width: mm(156),
+      height: mm(12.5),
+      align: "center",
+      ellipsis: true,
+    });
+  }
 
   res.statusCode = 200;
   res.setHeader("Content-type", "application/pdf");

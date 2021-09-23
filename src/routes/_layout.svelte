@@ -11,12 +11,10 @@
 <script>
   import { stores } from "@sapper/app";
   import { l } from "../lib/stores";
-  import { blur } from "svelte/transition";
   import Nav from "../components/Nav.svelte";
 
   export let segment, locale;
   $l = locale;
-  const { page } = stores();
 </script>
 
 <svelte:head>
@@ -26,15 +24,9 @@
 <main>
   <Nav {segment} />
 
-  {#key segment && $page.path}
-    <div
-      class="view fill"
-      in:blur={{ duration: 300, delay: 300 }}
-      out:blur={{ duration: 300 }}
-    >
-      <slot />
-    </div>
-  {/key}
+  <div class="view fill">
+    <slot />
+  </div>
 
   <footer class="row fcenter xfill">
     <p>Made with ♥ by verdu on 2021</p>

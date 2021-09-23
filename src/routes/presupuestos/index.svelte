@@ -212,6 +212,7 @@
   }
 
   .first {
+    text-align: center;
     padding: 40px;
 
     a.btn.pri {

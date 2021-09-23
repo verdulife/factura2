@@ -1,7 +1,8 @@
 <script>
-  import { goto } from "@sapper/app";
+  import { stores, goto } from "@sapper/app";
   import { userData, budgets, clients, products } from "../../lib/stores";
 
+  const { page } = stores();
   let budgetData = {};
   let lineData = {};
 
@@ -15,7 +16,7 @@
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
   };
-  budgetData.client = {};
+  budgetData.client = $page.query.client ? JSON.parse($page.query.client) : {};
   budgetData.items = [];
   budgetData.note = budgetData.note || $userData.budget_note;
 
@@ -136,7 +137,7 @@
 
 <div class="scroll">
   <section class="header col fcenter xfill">
-    <img src="/presupuestos.svg" alt="Presupuestos">
+    <img src="/presupuestos.svg" alt="Presupuestos" />
     <h1>Nuevo presupuesto</h1>
   </section>
 
@@ -305,7 +306,7 @@
     </div>
 
     <div class="row jcenter xfill">
-      <button class="succ semi">GENERAR FACTURA</button>
+      <button class="succ semi">GENERAR PRESUPUESTO</button>
       <a href="/presupuestos" class="btn out semi">CANCELAR</a>
     </div>
   </form>

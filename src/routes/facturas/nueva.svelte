@@ -1,7 +1,8 @@
 <script>
-  import { goto } from "@sapper/app";
+  import { stores, goto } from "@sapper/app";
   import { userData, bills, clients, products } from "../../lib/stores";
 
+  const { page } = stores();
   let billData = {};
   let lineData = {};
 
@@ -15,7 +16,7 @@
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
   };
-  billData.client = {};
+  billData.client = $page.query.client ? JSON.parse($page.query.client) : {};
   billData.items = [];
   billData.note = billData.note || $userData.bill_note;
 
