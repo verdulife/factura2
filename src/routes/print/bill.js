@@ -4,8 +4,6 @@ import SVGtoPDF from "svg-to-pdfkit";
 import { numerationFormat, roundWithTwoDecimals } from "../../lib/functions";
 import { bill_w_ret } from "./assets/bill_w_ret.svg";
 import { bill_wo_ret } from "./assets/bill_wo_ret.svg";
-import { budget_w_ret } from "./assets/budget_w_ret.svg";
-import { budget_wo_ret } from "./assets/budget_wo_ret.svg";
 
 PDFDocument.prototype.svg = function (svg, x, y, options) {
   return SVGtoPDF(this, svg, x, y, options), this;

@@ -17,6 +17,7 @@
   };
   budgetData.client = {};
   budgetData.items = [];
+  budgetData.note = budgetData.note || $userData.budget_note;
 
   function pushLine() {
     //TODO: change alerts for shake red animation
@@ -293,6 +294,16 @@
       <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR PRODUCTO/SERVICIO</div>
     </div>
 
+    <div class="box round col xfill">
+      <h2>Notas</h2>
+      <p class="notice">Si tienes que añadir o modificar la nota, este es el lugar.</p>
+
+      <div class="input-wrapper col xfill">
+        <label for="note">Notas</label>
+        <textarea id="note" bind:value={budgetData.note} class="xfill" placeholder="Ej. Transporte no incluido" />
+      </div>
+    </div>
+
     <div class="row jcenter xfill">
       <button class="succ semi">GENERAR FACTURA</button>
       <a href="/presupuestos" class="btn out semi">CANCELAR</a>
@@ -374,7 +385,8 @@
     }
 
     input,
-    select {
+    select,
+    textarea {
       font-size: 16px;
       border-bottom: 1px solid $sec;
       border-radius: 0;
@@ -386,6 +398,11 @@
       @media (max-width: $mobile) {
         font-size: 14px;
       }
+    }
+
+    textarea {
+      border: 1px solid $border;
+      resize: none;
     }
 
     .date {

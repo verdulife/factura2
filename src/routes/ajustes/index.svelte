@@ -428,7 +428,7 @@
       font-size: 16px;
       border-bottom: 1px solid $sec;
       border-radius: 0;
-      resize: none;
+      
 
       &:focus {
         border-color: $pri;
@@ -441,6 +441,7 @@
 
     textarea {
       border: 1px solid $border;
+      resize: none;
     }
 
     input[type="file"] {
