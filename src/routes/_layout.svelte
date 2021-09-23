@@ -10,6 +10,7 @@
 
 <script>
   import { l } from "../lib/stores";
+  import { blur } from "svelte/transition";
   import Nav from "../components/Nav.svelte";
 
   export let segment, locale;
@@ -25,9 +26,11 @@
 <main>
   <Nav {segment} />
 
-  <div class="view fill">
-    <slot />
-  </div>
+  {#key segment}
+    <div class="view fill" in:blur={{ duration: 300, delay: 300 }} out:blur={{ duration: 300 }}>
+      <slot />
+    </div>
+  {/key}
 
   <footer class="row fcenter xfill">
     <p>Made with ♥ by verdu on 2021</p>
@@ -47,5 +50,6 @@
     background: $pri;
     color: $white;
     font-size: 12px;
+    margin-top: auto;
   }
 </style>
