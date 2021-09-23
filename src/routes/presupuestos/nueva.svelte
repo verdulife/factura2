@@ -318,7 +318,7 @@
 
     h1 {
       max-width: 900px;
-      font-size: 6vh;
+      font-size: 5vh;
       line-height: 1;
 
       @media (max-width: $mobile) {
