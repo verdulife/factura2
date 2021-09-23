@@ -37,9 +37,8 @@
       link.href = blob;
       link.download = `Factura_${data.number}_${data.client.legal_id}.pdf`;
 
-      if (iOS) link.target = "_blank";
-
-      link.click();
+      if (iOS) window.open(blob);
+      else link.click();
 
       setTimeout(() => {
         loading = false;
