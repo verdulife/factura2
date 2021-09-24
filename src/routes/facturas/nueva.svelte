@@ -8,7 +8,7 @@
   let lineData = {};
 
   function autoBillNumber() {
-    return $bills.length + 1 || 1;
+    return $bills.length <= 0 ? 1 : Math.max(...$bills.map((n) => n.number)) + 1;
   }
 
   billData.number = autoBillNumber();
@@ -38,7 +38,22 @@
     }
 
     lineData.dto = lineData.dto || 0;
-    billData.items = [...billData.items, lineData];
+
+    if (billData.items.some((item) => item.label === lineData.label)) {
+      const check = confirm("Ya has añadido este producto/servicio.\n\n¿Quieres actualizarlo?");
+      if (!check) {
+        lineData = {};
+        return;
+      }
+
+      billData.items = billData.items.map((item) => {
+        if (item._id === lineData._id) return (item = lineData);
+        else return item;
+      });
+    } else {
+      billData.items = [...billData.items, lineData];
+    }
+
     lineData = {};
   }
 
@@ -80,22 +95,24 @@
   };
 
   function pushClient(client) {
-    if ($clients.some((c) => c.legal_id === client.legal_id)) return;
-
-    client._id = Date.now().toString();
-    $clients = [...$clients, client];
+    if (!$clients.some((c) => c.legal_id === client.legal_id)) {
+      client._id = Date.now().toString();
+      $clients = [...$clients, client];
+    }
   }
 
   function pushProduct(items) {
     for (let i = 0; i < items.length; i++) {
       let product = { ...items[i] };
-      if ($products.some((p) => p.label === product.label)) return;
 
-      delete product.amount;
-      delete product.dto;
-      product._id = Date.now().toString();
+      if (!$products.some((p) => p._id === product._id)) {
+        delete product.amount;
+        delete product.dto;
+        product._id = Date.now().toString();
 
-      $products = [...$products, product];
+        console.log(product);
+        $products = [...$products, product];
+      }
     }
   }
 
@@ -177,15 +194,14 @@
       {#if $clients.length > 0}
         <div class="input-wrapper col xfill">
           <label for="clients_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-
-          <!-- <select class="select-user xfill" id="clients_list" bind:value={billData.client}>
-            <option value={billData.client} disabled>Seleccionar cliente</option>
-            {#each $clients as client}
-              <option value={client}>{client.legal_name} - {client.legal_id}</option>
-            {/each}
-          </select> -->
-
-          <AutoComplete items={$clients} bind:selectedItem={billData.client} labelFieldName="legal_name" placeholder="Buscar cliente" noResultsText="No hay coincidencias" hideArrow />
+          <AutoComplete
+            items={$clients}
+            bind:selectedItem={billData.client}
+            labelFieldName="legal_name"
+            placeholder="Buscar cliente"
+            noResultsText="No hay coincidencias"
+            hideArrow
+          />
         </div>
       {/if}
 
@@ -239,11 +255,26 @@
         <ul class="bill-items col acenter xfill">
           {#each billData.items as item, i}
             <li class="line row xfill">
-              <input type="number" id="amount" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
-              <input type="text" id="label" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
-              <input type="number" id="dto" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
-              <input type="number" id="price" bind:value={item.price} step="0.01" class="out" placeholder="UNIDAD €" />
-              <input type="text" value="x" class="out" on:click={() => removeLine(i)} />
+              <input type="number" id="amount_{i}" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
+              <input type="text" id="label_{i}" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
+              <input
+                type="number"
+                id="dto_{i}"
+                bind:value={item.dto}
+                min="0"
+                max="100"
+                class="out"
+                placeholder="DTO %"
+              />
+              <input
+                type="number"
+                id="price_{i}"
+                bind:value={item.price}
+                step="0.01"
+                class="out"
+                placeholder="UNIDAD €"
+              />
+              <input type="text" value="🗑" class="out" on:click={() => removeLine(i)} />
             </li>
           {/each}
         </ul>
@@ -277,15 +308,17 @@
         <h-div />
       {/if}
 
-      {#if $clients.length > 0}
+      {#if $products.length > 0}
         <div class="input-wrapper col xfill">
           <label for="products_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-          <select class="select-user xfill" id="products_list" bind:value={lineData}>
-            <option value={lineData} disabled>Seleccionar producto</option>
-            {#each $products as product}
-              <option value={product}>{product.label} - {product.price}</option>
-            {/each}
-          </select>
+          <AutoComplete
+            items={$products}
+            bind:selectedItem={lineData}
+            labelFieldName="label"
+            placeholder="Buscar producto"
+            noResultsText="No hay coincidencias"
+            hideArrow
+          />
         </div>
       {/if}
 
@@ -422,9 +455,8 @@
 
     .line {
       &:nth-of-type(even) {
-        background: lighten($border, 5%);
-        border-top: 5px solid $white;
-        border-bottom: 5px solid $white;
+        background: $bg;
+        margin-top: -1px;
       }
 
       input:nth-of-type(1),
@@ -439,8 +471,8 @@
 
       input:nth-of-type(5) {
         cursor: pointer;
-        width: 50px;
-        background: $sec;
+        width: 55px;
+        background: $grey;
         text-align: center;
         color: $pri;
         font-weight: bold;

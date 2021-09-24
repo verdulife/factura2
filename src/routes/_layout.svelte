@@ -49,6 +49,10 @@
     margin-top: auto;
   }
 
+  .box {
+    background: $white;
+  }
+
   .autocomplete {
     width: 100% !important;
     height: auto !important;

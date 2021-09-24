@@ -227,7 +227,7 @@
       transition: 200ms;
 
       &:nth-of-type(even) {
-        background: lighten($border, 5%);
+        background: $bg;
       }
 
       &:hover {

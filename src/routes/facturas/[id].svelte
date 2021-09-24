@@ -1,10 +1,10 @@
 <script>
   import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
-  import { bills, userData } from "../../lib/stores";
+  import { bills, userData, products } from "../../lib/stores";
   import { POST } from "../../lib/functions";
-  import { iOS } from "../../lib/utils";
   import { toast } from "../../components/toaster";
+  import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
   let billData = $bills.filter((bill) => bill._id === $page.params.id)[0];
@@ -37,9 +37,7 @@
       const link = document.createElement("a");
       link.href = blob;
       link.download = `Factura_${data.number}_${data.client.legal_id}.pdf`;
-
-      if (iOS) window.open(blob);
-      else link.click();
+      link.click();
 
       setTimeout(() => {
         loading = false;
@@ -58,7 +56,9 @@
   }
 
   function deleteBill() {
-    const check = confirm("La numeracion de las otras facturas no se modificara. Recuerda usar la numeracion de esta factura en otra.\n\n¿Borrar definitivamente?");
+    const check = confirm(
+      "La numeracion de las otras facturas no se modificara. Recuerda usar la numeracion de esta factura en otra.\n\n¿Borrar definitivamente?"
+    );
 
     if (check) {
       $bills.splice($bills.indexOf(billData), 1);
@@ -68,10 +68,39 @@
   }
 
   function pushLine() {
-    if (Object.keys(lineData).length === 4) {
-      billData.items = [...billData.items, lineData];
-      lineData = {};
+    //TODO: change alerts for shake red animation
+
+    if (lineData.amount === undefined) {
+      alert("No hay una catidad definida para añadir la linea");
+      return;
     }
+    if (lineData.label === undefined) {
+      alert("No hay un concepto definido para añadir la linea");
+      return;
+    }
+    if (lineData.price === undefined) {
+      alert("No hay un precio unitario definido para añadir la linea");
+      return;
+    }
+
+    lineData.dto = lineData.dto || 0;
+
+    if (billData.items.some((item) => item.label === lineData.label)) {
+      const check = confirm("Ya has añadido este producto/servicio.\n\n¿Quieres actualizarlo?");
+      if (!check) {
+        lineData = {};
+        return;
+      }
+
+      billData.items = billData.items.map((item) => {
+        if (item._id === lineData._id) return (item = lineData);
+        else return item;
+      });
+    } else {
+      billData.items = [...billData.items, lineData];
+    }
+
+    lineData = {};
   }
 
   function removeLine(i) {
@@ -173,7 +202,7 @@
     <form class="bill-data col acenter xfill" on:submit|preventDefault={pushBill}>
       <div class="box round col xfill">
         <h2>Datos de la factura</h2>
-        <p class="notice">La numeración y fecha de la factura se rellenan automatiamente, pero puedes modificarlas.</p>
+        <p class="notice">Recuerda que cambiar la numeracion manualmente provocara que no sea correlativa.</p>
 
         <div class="row xfill">
           <div class="input-wrapper col grow">
@@ -188,7 +217,15 @@
             </div>
             <div class="input-wrapper date col">
               <label for="month">Mes</label>
-              <input type="number" id="month" min="1" max="12" class="xfill" bind:value={billData.date.month} required />
+              <input
+                type="number"
+                id="month"
+                min="1"
+                max="12"
+                class="xfill"
+                bind:value={billData.date.month}
+                required
+              />
             </div>
             <div class="input-wrapper date col">
               <label for="year">Año</label>
@@ -200,7 +237,7 @@
 
       <div class="box round col xfill">
         <h2>Datos del cliente</h2>
-        <p class="notice">Cada vez que añadas un cliente nuevo, este se guardara automatiamente.</p>
+        <p class="notice">Los cambios que realices aqui, no se guardaran en la ficha del cliente</p>
 
         <div class="input-wrapper col xfill">
           <label for="legal_name">NOMBRE FISCAL</label>
@@ -246,7 +283,7 @@
 
       <div class="box round col xfill">
         <h2>Conceptos</h2>
-        <p class="notice">Cada vez que añadas un producto/servicio nuevo, este se guardara automatiamente.</p>
+        <p class="notice">Los cambios que realices aqui, no se guardaran en la ficha del producto/servicio</p>
 
         {#if billData.items.length > 0}
           <ul class="bill-items col acenter xfill">
@@ -255,7 +292,14 @@
                 <input type="number" id="amount" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
                 <input type="text" id="label" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
                 <input type="number" id="dto" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
-                <input type="number" id="price" bind:value={item.price} step="0.01" class="out" placeholder="UNIDAD €" />
+                <input
+                  type="number"
+                  id="price"
+                  bind:value={item.price}
+                  step="0.01"
+                  class="out"
+                  placeholder="UNIDAD €"
+                />
                 <input type="text" value="x" class="out" on:click={() => removeLine(i)} />
               </li>
             {/each}
@@ -288,6 +332,20 @@
           </ul>
 
           <h-div />
+        {/if}
+
+        {#if $products.length > 0}
+          <div class="input-wrapper col xfill">
+            <label for="products_list" style="margin-bottom: 10px">CARGAR DATOS</label>
+            <AutoComplete
+              items={$products}
+              bind:selectedItem={lineData}
+              labelFieldName="label"
+              placeholder="Buscar producto"
+              noResultsText="No hay coincidencias"
+              hideArrow
+            />
+          </div>
         {/if}
 
         <div class="new-line row xfill">
@@ -446,7 +504,7 @@
 
     .line {
       &:nth-of-type(even) {
-        background: lighten($border, 5%);
+        background: $bg;
         border-top: 5px solid $white;
         border-bottom: 5px solid $white;
       }

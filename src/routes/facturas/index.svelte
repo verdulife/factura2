@@ -62,7 +62,7 @@
 
 <div class="scroll">
   <section class="header col fcenter xfill">
-    <img src="/facturas.svg" alt="Facturas">
+    <img src="/facturas.svg" alt="Facturas" />
     <h1>{tools[0].title}</h1>
     <p>{tools[0].desc}</p>
   </section>
@@ -191,6 +191,11 @@
     .filter-wrapper {
       align-items: stretch;
 
+      input,
+      select {
+        background: $white;
+      }
+
       select {
         @media (max-width: $mobile) {
           width: 50%;
@@ -227,11 +232,11 @@
       transition: 200ms;
 
       &:nth-of-type(even) {
-        background: lighten($border, 5%);
+        background: $bg;
       }
 
       &:hover {
-        background: $border;
+        background: lighten($border, 10%);
       }
 
       a {

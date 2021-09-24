@@ -1,13 +1,14 @@
 <script>
   import { stores, goto } from "@sapper/app";
   import { userData, budgets, clients, products } from "../../lib/stores";
+  import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
   let budgetData = {};
   let lineData = {};
 
   function autoBudgetNumber() {
-    return $budgets.length + 1 || 1;
+    return $budgets.length <= 0 ? 1 : Math.max(...$budgets.map((n) => n.number)) + 1;
   }
 
   budgetData.number = autoBudgetNumber();
@@ -37,7 +38,22 @@
     }
 
     lineData.dto = lineData.dto || 0;
-    budgetData.items = [...budgetData.items, lineData];
+
+    if (budgetData.items.some((item) => item.label === lineData.label)) {
+      const check = confirm("Ya has añadido este producto/servicio.\n\n¿Quieres actualizarlo?");
+      if (!check) {
+        lineData = {};
+        return;
+      }
+
+      budgetData.items = budgetData.items.map((item) => {
+        if (item._id === lineData._id) return (item = lineData);
+        else return item;
+      });
+    } else {
+      budgetData.items = [...budgetData.items, lineData];
+    }
+
     lineData = {};
   }
 
@@ -79,22 +95,22 @@
   };
 
   function pushClient(client) {
-    if ($clients.some((c) => c.legal_id === client.legal_id)) return;
-
-    client._id = Date.now().toString();
-    $clients = [...$clients, client];
+    if (!$clients.some((c) => c.legal_id === client.legal_id)) {
+      client._id = Date.now().toString();
+      $clients = [...$clients, client];
+    }
   }
 
   function pushProduct(items) {
     for (let i = 0; i < items.length; i++) {
       let product = { ...items[i] };
-      if ($products.some((p) => p.label === product.label)) return;
+      if (!$products.some((p) => p.label === product.label)) {
+        delete product.amount;
+        delete product.dto;
+        product._id = Date.now().toString();
 
-      delete product.amount;
-      delete product.dto;
-      product._id = Date.now().toString();
-
-      $products = [...$products, product];
+        $products = [...$products, product];
+      }
     }
   }
 
@@ -159,7 +175,15 @@
           </div>
           <div class="input-wrapper date col">
             <label for="month">Mes</label>
-            <input type="number" id="month" min="1" max="12" class="xfill" bind:value={budgetData.date.month} required />
+            <input
+              type="number"
+              id="month"
+              min="1"
+              max="12"
+              class="xfill"
+              bind:value={budgetData.date.month}
+              required
+            />
           </div>
           <div class="input-wrapper date col">
             <label for="year">Año</label>
@@ -176,12 +200,14 @@
       {#if $clients.length > 0}
         <div class="input-wrapper col xfill">
           <label for="clients_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-          <select class="select-user xfill" id="clients_list" bind:value={budgetData.client}>
-            <option value={budgetData.client} disabled>Seleccionar cliente</option>
-            {#each $clients as client}
-              <option value={client}>{client.legal_name} - {client.legal_id}</option>
-            {/each}
-          </select>
+          <AutoComplete
+            items={$clients}
+            bind:selectedItem={budgetData.client}
+            labelFieldName="legal_name"
+            placeholder="Buscar cliente"
+            noResultsText="No hay coincidencias"
+            hideArrow
+          />
         </div>
       {/if}
 
@@ -273,15 +299,18 @@
         <h-div />
       {/if}
 
-      {#if $clients.length > 0}
+      {#if $products.length > 0}
         <div class="input-wrapper col xfill">
           <label for="products_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-          <select class="select-user xfill" id="products_list" bind:value={lineData}>
-            <option value={lineData} disabled>Seleccionar producto</option>
-            {#each $products as product}
-              <option value={product}>{product.label} - {product.price}</option>
-            {/each}
-          </select>
+
+          <AutoComplete
+            items={$products}
+            bind:selectedItem={lineData}
+            labelFieldName="label"
+            placeholder="Buscar producto"
+            noResultsText="No hay coincidencias"
+            hideArrow
+          />
         </div>
       {/if}
 
@@ -418,7 +447,7 @@
 
     .line {
       &:nth-of-type(even) {
-        background: lighten($border, 5%);
+        background: $bg;
         border-top: 5px solid $white;
         border-bottom: 5px solid $white;
       }

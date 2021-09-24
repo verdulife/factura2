@@ -38,7 +38,7 @@
 
 <div class="scroll">
   <section class="header col fcenter xfill">
-    <img src="/productos-servicios.svg" alt="Productos y servicios">
+    <img src="/productos-servicios.svg" alt="Productos y servicios" />
     <h1>{tools[4].title}</h1>
     <p>{tools[4].desc}</p>
   </section>
@@ -178,7 +178,7 @@
       transition: 200ms;
 
       &:nth-of-type(even) {
-        background: lighten($border, 5%);
+        background: $bg;
       }
 
       &:hover {
