@@ -31,7 +31,7 @@ export async function post(req, res) {
     height: mm(297),
   });
 
-  doc.image(data.user.logo, mm(25), mm(23), { fit: [mm(40), mm(25)], align: "center", valign: "center" });
+  if (data.user.logo) doc.image(data.user.logo, mm(25), mm(23), { fit: [mm(40), mm(25)], align: "center", valign: "center" });
 
   doc.text(
     `${data.user.legal_name} | ${data.user.legal_id}

@@ -1,6 +1,7 @@
 <script>
   import { stores, goto } from "@sapper/app";
   import { userData, bills, clients, products } from "../../lib/stores";
+  import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
   let billData = {};
@@ -176,12 +177,15 @@
       {#if $clients.length > 0}
         <div class="input-wrapper col xfill">
           <label for="clients_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-          <select class="select-user xfill" id="clients_list" bind:value={billData.client}>
+
+          <!-- <select class="select-user xfill" id="clients_list" bind:value={billData.client}>
             <option value={billData.client} disabled>Seleccionar cliente</option>
             {#each $clients as client}
               <option value={client}>{client.legal_name} - {client.legal_id}</option>
             {/each}
-          </select>
+          </select> -->
+
+          <AutoComplete items={$clients} bind:selectedItem={billData.client} labelFieldName="legal_name" placeholder="Buscar cliente" noResultsText="No hay coincidencias" hideArrow />
         </div>
       {/if}
 

@@ -48,4 +48,28 @@
     font-size: 12px;
     margin-top: auto;
   }
+
+  .autocomplete {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .autocomplete-input {
+    width: 100% !important;
+    background: transparent !important;
+    color: $base !important;
+    font-size: 16px !important;
+    border: 1px solid $border !important;
+    padding: 0.9em 1em !important;
+    transition: 200ms !important;
+  }
+
+  .autocomplete-list {
+    top: unset !important;
+    width: 100% !important;
+  }
+
+  .autocomplete-list-item {
+    width: 100% !important;
+  }
 </style>
