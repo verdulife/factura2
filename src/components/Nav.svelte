@@ -38,9 +38,13 @@
     <li class="row acenter yfill">
       <a href="/ajustes" class="row acenter yfill">
         {#if $userData.logo}
-          <img class="user-img" src={$userData.logo} alt={$userData.legal_name || "Logotipo"} />
+          <img
+            class="user-img"
+            src={$userData.logo}
+            alt={$userData.legal_name || "Logotipo"}
+          />
         {/if}
-        {$userData.legal_name || "Ajustes"}
+        {$userData.legal_name || "Tus datos"}
       </a>
     </li>
   </ul>
@@ -67,7 +71,11 @@
         <li class="row acenter xfill" on:click={togMenu}>
           <a href="/ajustes" class="row acenter yfill">
             {#if $userData.logo}
-              <img class="user-img" src={$userData.logo} alt={$userData.legal_name || "Logotipo"} />
+              <img
+                class="user-img"
+                src={$userData.logo}
+                alt={$userData.legal_name || "Logotipo"}
+              />
             {/if}
             {$userData.legal_name || "Ajustes"}
           </a>
@@ -118,7 +126,7 @@
         transition: 200ms;
 
         &:hover {
-          background: $border;
+          background: lighten($border, 10%);
         }
 
         &:last-of-type {
@@ -128,14 +136,14 @@
         img {
           width: 20px;
           height: 20px;
-          object-fit: contain;
+          object-fit: cover;
           margin-right: 10px;
         }
       }
     }
 
     &:hover {
-      background: $border;
+      background: lighten($border, 10%);
 
       .expand-menu {
         opacity: 1;

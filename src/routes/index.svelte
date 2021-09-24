@@ -80,15 +80,17 @@
   .tools {
     align-items: stretch;
     padding: 40px;
-
+    padding-bottom: 100px;
+    
     @media (max-width: $mobile) {
-      padding: 10px;
+      padding: 40px 10px;
     }
 
     li {
       cursor: pointer;
       width: 25%;
       min-width: 250px;
+      max-width: 350px;
       margin: 5px;
       padding: 20px;
       transition: 200ms;
@@ -99,7 +101,7 @@
       }
 
       &:hover {
-        background: $border;
+        background: lighten($border, 10%);
       }
 
       .icon {

@@ -182,7 +182,7 @@
       }
 
       &:hover {
-        background: $border;
+        background: lighten($border, 10%);
       }
 
       a {

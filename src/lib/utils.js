@@ -9,7 +9,7 @@ export const tools = [
   },
   {
     slug: "/presupuestos",
-    title: "Presupuetos",
+    title: "Presupuestos",
     desc: "Genera y/o modifica presupuestos. Envíalos por correo electrónico y/o guárdalos en PDF.",
     icon: "presupuestos.svg",
   },
