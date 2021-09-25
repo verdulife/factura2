@@ -23,3 +23,4 @@
 - [ ] clientes && clientes/id: boton conctacto en cada cliente
 - [ ] productos: diseñar modal new product
 - [ ] SEO
+- [ ] modulo de importacion datos (contactos, productos, etc)
