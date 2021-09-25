@@ -36,7 +36,7 @@
             <img src={tool.icon} alt={tool.title} />
           </div>
 
-          <h2 class="nowrap xfill">{tool.title}</h2>
+          <h2 class="xfill">{tool.title}</h2>
           <p>{tool.desc}</p>
         </a>
       </li>
@@ -78,6 +78,8 @@
   }
 
   .tools {
+    max-width: 1400px;
+    margin: 0 auto;
     align-items: stretch;
     padding: 40px;
     padding-bottom: 100px;
@@ -90,7 +92,6 @@
       cursor: pointer;
       width: 25%;
       min-width: 250px;
-      max-width: 350px;
       margin: 5px;
       padding: 20px;
       transition: 200ms;
