@@ -5,7 +5,9 @@
 - [x] Email de sugerencias
 - [x] pagina privacidad
 - [x] landing: boton a tus datos si no estan rellenados + info
-- [ ] cookies
+- [x] cookies
+- [-] facturas: labels en conceptos
+- [ ] pasar localStorage a preload
 - [ ] Rediseñar facturas/ppto/albaranes
 - [ ] Sync with google drive
 - [ ] Rediseñar error page
@@ -14,10 +16,9 @@
 - [ ] facturas: boton pdf en cada factura
 - [ ] facturas: boton enviar por email en cada factura
 - [ ] facturas: descarga multiple de facturas
-- [ ] facturas: labels en conceptos
 - [ ] facturas/nueva: boton atras en header
 - [ ] facturas/id: rediseñar cta box
-- [ ] facturas/id: 
+- [ ] facturas/id:
 - [ ] hacer seccion albaranes (buscar info)
 - [ ] hacer seccion proveedores (duplicar clientes)
 - [ ] clientes && clientes/id: boton conctacto en cada cliente

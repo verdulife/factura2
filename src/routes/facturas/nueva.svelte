@@ -1,6 +1,7 @@
 <script>
   import { stores, goto } from "@sapper/app";
   import { userData, bills, clients, products } from "../../lib/stores";
+  import { roundWithTwoDecimals } from "../../lib/functions";
   import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
@@ -21,13 +22,13 @@
   billData.items = [];
   billData.note = billData.note || $userData.bill_note;
 
-  function pushLine() {
-    //TODO: change alerts for shake red animation
+  function calcLineTotal(item) {
+    const amount_price = item.price * item.amount;
+    const dto_price = amount_price - (amount_price * item.dto) / 100;
+    return `${roundWithTwoDecimals(dto_price).toFixed(2)}${$userData.currency}`;
+  }
 
-    if (lineData.amount === undefined) {
-      alert("No hay una catidad definida para añadir la linea");
-      return;
-    }
+  function pushLine() {
     if (lineData.label === undefined) {
       alert("No hay un concepto definido para añadir la linea");
       return;
@@ -37,6 +38,7 @@
       return;
     }
 
+    lineData.amount = lineData.amount || 1;
     lineData.dto = lineData.dto || 0;
 
     if (billData.items.some((item) => item.label === lineData.label)) {
@@ -67,7 +69,7 @@
       const amount_price = curr.price * curr.amount;
 
       if (curr.dto > 0) {
-        let dto_price = amount_price - (amount_price * curr.dto) / 100;
+        const dto_price = amount_price - (amount_price * curr.dto) / 100;
         return acc + dto_price;
       }
 
@@ -253,27 +255,28 @@
 
       {#if billData.items.length > 0}
         <ul class="bill-items col acenter xfill">
+          <li class="line row xfill">
+            <span class="label row">CANT</span>
+            <span class="label row grow">CONCEPTO</span>
+            <span class="label row">DTO %</span>
+            <span class="label row">UNIDAD {$userData.currency}</span>
+            <span class="label row">IMPORTE {$userData.currency}</span>
+            <span class="label row">&nbsp;</span>
+          </li>
+
           {#each billData.items as item, i}
             <li class="line row xfill">
-              <input type="number" id="amount_{i}" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
-              <input type="text" id="label_{i}" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
+              <input type="number" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
+              <input type="text" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
+              <input type="number" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
               <input
                 type="number"
-                id="dto_{i}"
-                bind:value={item.dto}
-                min="0"
-                max="100"
-                class="out"
-                placeholder="DTO %"
-              />
-              <input
-                type="number"
-                id="price_{i}"
                 bind:value={item.price}
                 step="0.01"
                 class="out"
-                placeholder="UNIDAD €"
+                placeholder="UNIDAD {$userData.currency}"
               />
+              <input type="text" value={calcLineTotal(item)} class="out" disabled />
               <input type="text" value="🗑" class="out" on:click={() => removeLine(i)} />
             </li>
           {/each}
@@ -284,24 +287,24 @@
         <ul class="total-wrapper row jaround xfill">
           <li class="col acenter">
             <p class="label">Base imponible</p>
-            <h3>{base_total().toFixed(2)}€</h3>
+            <h3>{roundWithTwoDecimals(base_total()).toFixed(2)}{$userData.currency}</h3>
           </li>
 
           <li class="col acenter">
             <p class="label">IVA {$userData.iva}%</p>
-            <h3>{iva_total().toFixed(2)}€</h3>
+            <h3>{roundWithTwoDecimals(iva_total()).toFixed(2)}{$userData.currency}</h3>
           </li>
 
           {#if $userData.ret}
             <li class="col acenter">
               <p class="label">IRPF {$userData.ret}%</p>
-              <h3>-{ret_total().toFixed(2)}€</h3>
+              <h3>-{roundWithTwoDecimals(ret_total()).toFixed(2)}{$userData.currency}</h3>
             </li>
           {/if}
 
           <li class="col acenter">
             <p class="label">Total</p>
-            <h3>{bill_total().toFixed(2)}€</h3>
+            <h3>{roundWithTwoDecimals(bill_total()).toFixed(2)}€</h3>
           </li>
         </ul>
 
@@ -459,9 +462,20 @@
         margin-top: -1px;
       }
 
-      input:nth-of-type(1),
-      input:nth-of-type(3),
-      input:nth-of-type(4) {
+      span.label {
+        font-size: 12px;
+        padding-left: 15px;
+        margin-bottom: 5px;
+
+        @media (max-width: $mobile) {
+          display: none;
+        }
+      }
+
+      span.label:nth-of-type(1),
+      span.label:nth-of-type(3),
+      span.label:nth-of-type(4),
+      span.label:nth-of-type(5) {
         width: 15%;
 
         @media (max-width: $mobile) {
@@ -469,7 +483,22 @@
         }
       }
 
+      span:nth-of-type(6) {
+        width: 55px;
+      }
+
+      input:nth-of-type(1),
+      input:nth-of-type(3),
+      input:nth-of-type(4),
       input:nth-of-type(5) {
+        width: 15%;
+
+        @media (max-width: $mobile) {
+          width: 25%;
+        }
+      }
+
+      input:nth-of-type(6) {
         cursor: pointer;
         width: 55px;
         background: $grey;
@@ -485,9 +514,10 @@
 
       input:nth-of-type(3),
       input:nth-of-type(4),
-      input:nth-of-type(5) {
+      input:nth-of-type(5),
+      input:nth-of-type(6) {
         @media (max-width: $mobile) {
-          width: calc(100% / 3);
+          width: 25%;
         }
       }
     }

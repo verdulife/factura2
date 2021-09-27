@@ -12,6 +12,7 @@
   import { stores } from "@sapper/app";
   import { l } from "../lib/stores";
   import Nav from "../components/Nav.svelte";
+  import Cookies from "../components/Cookies.svelte";
 
   export let segment, locale;
   $l = locale;
@@ -30,9 +31,16 @@
 
   <footer class="row fcenter xfill">
     <p>
-      Made with ♥ by verdu on 2021 &nbsp;|&nbsp; <a href="/privacidad">Politica de privacidad</a> &nbsp;|&nbsp; <a href="mailto:facturasgratis.app@gmail.com">¿Tienes alguna sugerencia?</a>
+      Made with ♥ by verdu on 2021 &nbsp;|&nbsp;&nbsp;
+      <a href="/privacidad">Politica de privacidad</a>
+      <span class="not-mobile">
+        &nbsp;&nbsp;|&nbsp;
+        <a href="mailto:facturasgratis.app@gmail.com">¿Tienes alguna sugerencia?</a>
+      </span>
     </p>
   </footer>
+
+  <Cookies />
 </main>
 
 <style lang="scss" global>
@@ -52,6 +60,12 @@
 
     a {
       color: $sec;
+    }
+
+    @media (max-width: $mobile) {
+      span {
+        display: none;
+      }
     }
   }
 

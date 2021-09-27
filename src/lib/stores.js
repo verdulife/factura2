@@ -2,6 +2,11 @@ import { writable } from "svelte/store";
 
 export const l = writable("es");
 
+export const cookies = writable((process.browser && JSON.parse(localStorage.getItem("cookies"))) || {
+  _created: new Date().toISOString(),
+  visited: false,
+});
+
 export const userData = writable((process.browser && JSON.parse(localStorage.getItem("userData"))) || {});
 
 export const bills = writable((process.browser && JSON.parse(localStorage.getItem("bills"))) || []);
@@ -11,6 +16,8 @@ export const deliveries = writable((process.browser && JSON.parse(localStorage.g
 export const clients = writable((process.browser && JSON.parse(localStorage.getItem("clients"))) || []);
 export const products = writable((process.browser && JSON.parse(localStorage.getItem("products"))) || []);
 export const providers = writable((process.browser && JSON.parse(localStorage.getItem("providers"))) || []);
+
+cookies.subscribe((val) => process.browser && (localStorage.cookies = JSON.stringify(val)));
 
 userData.subscribe((val) => process.browser && (localStorage.userData = JSON.stringify(val)));
 
