@@ -34,6 +34,9 @@
     <div class="number">4</div>
   </div>
 
+  <h1>Página no encontrada</h1>
+  <a href="/" class="btn succ semi">VOLVER AL INICIO</a>
+
   {#if dev && error.stack}
     <pre class="xfill">{error.stack}</pre>
   {/if}
@@ -42,8 +45,10 @@
 <style lang="scss">
   .error {
     box-sizing: unset !important;
+    margin-bottom: 40px;
 
-    * {
+    *,
+    *:before {
       box-sizing: unset !important;
     }
   }
@@ -90,20 +95,8 @@
     width: 9.2rem;
     height: 12.4rem;
     border: 0.3rem solid $pri;
-    background-color: $white;
+    background: $white;
     border-radius: 0.8rem;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: -0.7rem;
-      right: -0.7rem;
-      width: 1.4rem;
-      height: 1rem;
-      background-color: $white;
-      border-bottom: 0.3rem solid $pri;
-      transform: rotate(45deg);
-    }
   }
 
   .face {
@@ -125,7 +118,7 @@
     width: 0.8rem;
     height: 0.8rem;
     border-radius: 50%;
-    background-color: $pri;
+    background: $pri;
     animation-name: eye;
     animation-duration: 4s;
     animation-iteration-count: infinite;
@@ -164,7 +157,7 @@
     width: 1rem;
     height: 0.2rem;
     border-radius: 50%;
-    background-color: $error;
+    background: lightcoral;
   }
 
   .rosyCheeks-left {
@@ -183,7 +176,7 @@
     height: 0.2rem;
     border-radius: 0.1rem;
     transform: translateX(-50%);
-    background-color: $pri;
+    background: $pri;
   }
 
   a.btn {

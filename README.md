@@ -1,27 +1,23 @@
 # ⚠ Under construction ⚠
 
-### TODOS:
-
-- [x] Email de sugerencias
-- [x] pagina privacidad
-- [x] landing: boton a tus datos si no estan rellenados + info
-- [x] cookies
-- [x] facturas: labels en conceptos
-- [ ] Rediseñar error page
-- [ ] facturas: boton pdf en cada factura
-- [ ] facturas/id: rediseñar cta box
-- [ ] pasar localStorage a preload
-- [ ] facturas/nueva: boton atras en header
-- [ ] Rediseñar facturas/ppto/albaranes
-- [ ] Sync with google drive
-- [ ] seccion FAQ
-- [ ] enlaces a wikipedia o mejor explicacion
-- [ ] facturas: boton enviar por email en cada factura
-- [ ] facturas: descarga multiple de facturas
-- [ ] facturas/id:
-- [ ] hacer seccion albaranes (buscar info)
-- [ ] hacer seccion proveedores (duplicar clientes)
-- [ ] clientes && clientes/id: boton conctacto en cada cliente
+### TODOS para 🚀:
+- [x] Rediseñar error page
+- [ ] todas/nueva: boton atras en header
+- [ ] clientes && clientes/id: boton conctacto
 - [ ] productos: diseñar modal new product
+- [ ] facturas && pptos /id: rediseñar cta box
+- [ ] facturas && pptos: boton pdf
+- [ ] Rediseñar facturas/ppto/albaranes
+- [ ] Wiki page && seccion FAQ
 - [ ] SEO
+
+### TODOS 🐌:
+- [ ] pasar localStorage a preload
+- [ ] Sync with google drive
+- [ ] enviar por email
+- [ ] descarga multiple
+- [ ] hacer seccion albaranes (buscar info)
 - [ ] modulo de importacion datos (contactos, productos, etc)
+- [ ] hacer seccion proveedores (duplicar clientes)
+- [ ] calculadora autonomos
+- [ ] calculadora metro cuadrado
