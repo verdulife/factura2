@@ -1,7 +1,7 @@
 <script>
   import { userData, bills } from "../../lib/stores";
   import { tools, months } from "../../lib/utils";
-  import { sortByNumber } from "../../lib/functions";
+  import { sortByNumber, roundWithTwoDecimals } from "../../lib/functions";
 
   let billsData = [...$bills];
   let searchTerm = "";
@@ -110,7 +110,7 @@
                 <p>{bill.client.legal_id}</p>
               </div>
 
-              <h3>{bill.totals.total.toFixed(2)}€</h3>
+              <h3>{roundWithTwoDecimals(bill.totals.total).toFixed(2)}€</h3>
             </div>
 
             <div class="info row xfill">

@@ -196,14 +196,7 @@
       {#if $clients.length > 0}
         <div class="input-wrapper col xfill">
           <label for="clients_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-          <AutoComplete
-            items={$clients}
-            bind:selectedItem={billData.client}
-            labelFieldName="legal_name"
-            placeholder="Buscar cliente"
-            noResultsText="No hay coincidencias"
-            hideArrow
-          />
+          <AutoComplete items={$clients} bind:selectedItem={billData.client} labelFieldName="legal_name" placeholder="Buscar cliente" noResultsText="No hay coincidencias" hideArrow />
         </div>
       {/if}
 
@@ -269,13 +262,7 @@
               <input type="number" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
               <input type="text" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
               <input type="number" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
-              <input
-                type="number"
-                bind:value={item.price}
-                step="0.01"
-                class="out"
-                placeholder="UNIDAD {$userData.currency}"
-              />
+              <input type="number" bind:value={item.price} step="0.01" class="out" placeholder="UNIDAD {$userData.currency}" />
               <input type="text" value={calcLineTotal(item)} class="out" disabled />
               <input type="text" value="🗑" class="out" on:click={() => removeLine(i)} />
             </li>
@@ -314,14 +301,7 @@
       {#if $products.length > 0}
         <div class="input-wrapper col xfill">
           <label for="products_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-          <AutoComplete
-            items={$products}
-            bind:selectedItem={lineData}
-            labelFieldName="label"
-            placeholder="Buscar producto"
-            noResultsText="No hay coincidencias"
-            hideArrow
-          />
+          <AutoComplete items={$products} bind:selectedItem={lineData} labelFieldName="label" placeholder="Buscar producto" noResultsText="No hay coincidencias" hideArrow />
         </div>
       {/if}
 

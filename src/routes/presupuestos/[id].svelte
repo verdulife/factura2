@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
   import { budgets, userData, bills, products } from "../../lib/stores";
-  import { POST } from "../../lib/functions";
+  import { POST, roundWithTwoDecimals } from "../../lib/functions";
   import { toast } from "../../components/toaster";
   import AutoComplete from "simple-svelte-autocomplete";
 
@@ -75,9 +75,7 @@
   }
 
   function deleteBudget() {
-    const check = comfirm(
-      "La numeracion de los otros presupuestos no se modificara. Recuerda usar la numeracion de este presupuesto en otro.\n\n¿Borrar definitivamente?"
-    );
+    const check = comfirm("La numeracion de los otros presupuestos no se modificara. Recuerda usar la numeracion de este presupuesto en otro.\n\n¿Borrar definitivamente?");
 
     if (check) {
       $budgets.splice($budgets.indexOf(budgetData), 1);
@@ -86,13 +84,13 @@
     }
   }
 
-  function pushLine() {
-    //TODO: change alerts for shake red animation
+  function calcLineTotal(item) {
+    const amount_price = item.price * item.amount;
+    const dto_price = amount_price - (amount_price * item.dto) / 100;
+    return `${roundWithTwoDecimals(dto_price).toFixed(2)}${$userData.currency}`;
+  }
 
-    if (lineData.amount === undefined) {
-      alert("No hay una catidad definida para añadir la linea");
-      return;
-    }
+  function pushLine() {
     if (lineData.label === undefined) {
       alert("No hay un concepto definido para añadir la linea");
       return;
@@ -102,6 +100,7 @@
       return;
     }
 
+    lineData.amount = lineData.amount || 1;
     lineData.dto = lineData.dto || 0;
 
     if (budgetData.items.some((item) => item.label === lineData.label)) {
@@ -132,7 +131,7 @@
       const amount_price = curr.price * curr.amount;
 
       if (curr.dto > 0) {
-        let dto_price = amount_price - (amount_price * curr.dto) / 100;
+        const dto_price = amount_price - (amount_price * curr.dto) / 100;
         return acc + dto_price;
       }
 
@@ -236,15 +235,7 @@
             </div>
             <div class="input-wrapper date col">
               <label for="month">Mes</label>
-              <input
-                type="number"
-                id="month"
-                min="1"
-                max="12"
-                class="xfill"
-                bind:value={budgetData.date.month}
-                required
-              />
+              <input type="number" id="month" min="1" max="12" class="xfill" bind:value={budgetData.date.month} required />
             </div>
             <div class="input-wrapper date col">
               <label for="year">Año</label>
@@ -306,20 +297,23 @@
 
         {#if budgetData.items.length > 0}
           <ul class="budget-items col acenter xfill">
+            <li class="line row xfill">
+              <span class="label row">CANT</span>
+              <span class="label row grow">CONCEPTO</span>
+              <span class="label row">DTO %</span>
+              <span class="label row">UNIDAD {$userData.currency}</span>
+              <span class="label row">IMPORTE {$userData.currency}</span>
+              <span class="label row">&nbsp;</span>
+            </li>
+
             {#each budgetData.items as item, i}
               <li class="line row xfill">
                 <input type="number" id="amount" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
                 <input type="text" id="label" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
                 <input type="number" id="dto" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
-                <input
-                  type="number"
-                  id="price"
-                  bind:value={item.price}
-                  step="0.01"
-                  class="out"
-                  placeholder="UNIDAD €"
-                />
-                <input type="text" value="x" class="out" on:click={() => removeLine(i)} />
+                <input type="number" id="price" bind:value={item.price} step="0.01" class="out" placeholder="UNIDAD {$userData.currency}" />
+                <input type="text" value={calcLineTotal(item)} class="out" disabled />
+                <input type="text" value="🗑" class="out" on:click={() => removeLine(i)} />
               </li>
             {/each}
           </ul>
@@ -329,24 +323,24 @@
           <ul class="total-wrapper row jaround xfill">
             <li class="col acenter">
               <p class="label">Base imponible</p>
-              <h3>{base_total().toFixed(2)}€</h3>
+              <h3>{roundWithTwoDecimals(base_total()).toFixed(2)}{$userData.currency}</h3>
             </li>
 
             <li class="col acenter">
               <p class="label">IVA {$userData.iva}%</p>
-              <h3>{iva_total().toFixed(2)}€</h3>
+              <h3>{roundWithTwoDecimals(iva_total()).toFixed(2)}{$userData.currency}</h3>
             </li>
 
             {#if $userData.ret}
               <li class="col acenter">
                 <p class="label">IRPF {$userData.ret}%</p>
-                <h3>-{ret_total().toFixed(2)}€</h3>
+                <h3>-{roundWithTwoDecimals(ret_total()).toFixed(2)}{$userData.currency}</h3>
               </li>
             {/if}
 
             <li class="col acenter">
               <p class="label">Total</p>
-              <h3>{budget_total().toFixed(2)}€</h3>
+              <h3>{roundWithTwoDecimals(budget_total()).toFixed(2)}€</h3>
             </li>
           </ul>
 
@@ -357,14 +351,7 @@
           <div class="input-wrapper col xfill">
             <label for="products_list" style="margin-bottom: 10px">CARGAR DATOS</label>
 
-            <AutoComplete
-              items={$products}
-              bind:selectedItem={lineData}
-              labelFieldName="label"
-              placeholder="Buscar producto"
-              noResultsText="No hay coincidencias"
-              hideArrow
-            />
+            <AutoComplete items={$products} bind:selectedItem={lineData} labelFieldName="label" placeholder="Buscar producto" noResultsText="No hay coincidencias" hideArrow />
           </div>
         {/if}
 
@@ -372,7 +359,7 @@
           <input type="number" id="amount" bind:value={lineData.amount} min="1" class="out" placeholder="CANT" />
           <input type="text" id="label" bind:value={lineData.label} class="out grow" placeholder="CONCEPTO" />
           <input type="number" id="dto" bind:value={lineData.dto} min="0" max="100" class="out" placeholder="DTO %" />
-          <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="UNIDAD €" />
+          <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="UNIDAD {$userData.currency}" />
         </div>
 
         <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR PRODUCTO/SERVICIO</div>
@@ -525,13 +512,23 @@
     .line {
       &:nth-of-type(even) {
         background: $bg;
-        border-top: 5px solid $white;
-        border-bottom: 5px solid $white;
+        margin-top: -1px;
       }
 
-      input:nth-of-type(1),
-      input:nth-of-type(3),
-      input:nth-of-type(4) {
+      span.label {
+        font-size: 12px;
+        padding-left: 15px;
+        margin-bottom: 5px;
+
+        @media (max-width: $mobile) {
+          display: none;
+        }
+      }
+
+      span.label:nth-of-type(1),
+      span.label:nth-of-type(3),
+      span.label:nth-of-type(4),
+      span.label:nth-of-type(5) {
         width: 15%;
 
         @media (max-width: $mobile) {
@@ -539,10 +536,25 @@
         }
       }
 
+      span:nth-of-type(6) {
+        width: 55px;
+      }
+
+      input:nth-of-type(1),
+      input:nth-of-type(3),
+      input:nth-of-type(4),
       input:nth-of-type(5) {
+        width: 15%;
+
+        @media (max-width: $mobile) {
+          width: 25%;
+        }
+      }
+
+      input:nth-of-type(6) {
         cursor: pointer;
-        width: 50px;
-        background: $sec;
+        width: 55px;
+        background: $grey;
         text-align: center;
         color: $pri;
         font-weight: bold;
@@ -555,9 +567,10 @@
 
       input:nth-of-type(3),
       input:nth-of-type(4),
-      input:nth-of-type(5) {
+      input:nth-of-type(5),
+      input:nth-of-type(6) {
         @media (max-width: $mobile) {
-          width: calc(100% / 3);
+          width: 25%;
         }
       }
     }
