@@ -13,6 +13,10 @@
 
 ### TODOS 🐌:
 - [ ] pasar localStorage a preload
+- [ ] herramienta: registro de pagos (quien, como y cuanto)
+- [ ] herramienta: escaner ocr
+- [ ] sumar facturas/pptos
+- [ ] gasto total cliente segun fechas
 - [ ] Sync with google drive
 - [ ] enviar por email
 - [ ] descarga multiple
