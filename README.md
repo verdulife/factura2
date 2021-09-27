@@ -1,17 +1,19 @@
 # ⚠ Under construction ⚠
 
 ### TODOS para 🚀:
-- [x] Rediseñar error page
+- [ ] error page mobile
+- [ ] arreglar boton "limpiar filtros"
+- [ ] uppercase mensaje borrar db
 - [ ] todas/nueva: boton atras en header
-- [ ] clientes && clientes/id: boton conctacto
-- [ ] productos: diseñar modal new product
 - [ ] facturas && pptos /id: rediseñar cta box
-- [ ] facturas && pptos: boton pdf
-- [ ] Rediseñar facturas/ppto/albaranes
-- [ ] Wiki page && seccion FAQ
+- [ ] productos: diseñar modal new product
 - [ ] SEO
 
 ### TODOS 🐌:
+- [ ] clientes && clientes/id: boton conctacto
+- [ ] facturas && pptos: boton pdf
+- [ ] Rediseñar facturas/ppto/albaranes
+- [ ] Wiki page && seccion FAQ
 - [ ] pasar localStorage a preload
 - [ ] herramienta: registro de pagos (quien, como y cuanto)
 - [ ] herramienta: escaner ocr
