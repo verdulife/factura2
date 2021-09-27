@@ -1,8 +1,8 @@
 {
   "background_color": "#ffffff",
   "theme_color": "#333333",
-  "name": "verdu",
-  "short_name": "verdu",
+  "name": "facturasgratis",
+  "short_name": "facturasgratis",
   "display": "standalone",
   "start_url": "/",
   "icons": [

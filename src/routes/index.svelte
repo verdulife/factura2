@@ -1,5 +1,6 @@
 <script>
   import { tools } from "../lib/utils";
+  import { userData } from "../lib/stores";
 </script>
 
 <svelte:head>
@@ -22,10 +23,13 @@
 <div class="scroll">
   <section class="header col fcenter xfill">
     <h1>Herramientas online para gestionar tu negocio</h1>
-    <p>
-      Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
-      clientes, proveedores y productos/servicios. No se necesita instalación.
-    </p>
+    <p>Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes, clientes, proveedores y productos/servicios. No se necesita instalación.</p>
+
+    {#if Object.keys($userData).length <= 0}
+      <h3>Primeros pasos</h3>
+      <p>Para empezar a trabajar con <b>factuas gratis</b>, el primer paso es rellenar tus datos.</p>
+      <a href="/ajustes" class="btn succ semi">RELLENAR DATOS</a>
+    {/if}
   </section>
 
   <ul class="tools row jcenter xfill">
@@ -49,10 +53,10 @@
     background: linear-gradient(45deg, $pri 50%, $sec);
     text-align: center;
     color: $white;
-    padding: 80px;
+    padding: 60px 40px;
 
     @media (max-width: $mobile) {
-      padding: 40px;
+      padding: 40px 20px;
     }
 
     h1 {
@@ -70,6 +74,7 @@
       max-width: 900px;
       font-size: 18px;
       color: $sec;
+      margin-bottom: 20px;
 
       @media (max-width: $mobile) {
         font-size: 14px;
@@ -83,7 +88,7 @@
     align-items: stretch;
     padding: 40px;
     padding-bottom: 100px;
-    
+
     @media (max-width: $mobile) {
       padding: 40px 10px;
     }

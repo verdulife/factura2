@@ -29,7 +29,9 @@
   </div>
 
   <footer class="row fcenter xfill">
-    <p>Made with ♥ by verdu on 2021</p>
+    <p>
+      Made with ♥ by verdu on 2021 &nbsp;|&nbsp; <a href="/privacidad">Politica de privacidad</a> &nbsp;|&nbsp; <a href="mailto:facturasgratis.app@gmail.com">¿Tienes alguna sugerencia?</a>
+    </p>
   </footer>
 </main>
 
@@ -38,15 +40,19 @@
   @import "../../node_modules/verdu/verdu";
 
   .view {
-    height: calc(100% - 90px);
+    height: calc(100% - 95px);
   }
 
   footer {
-    height: 25px;
+    height: 30px;
     background: $pri;
     color: $white;
     font-size: 12px;
     margin-top: auto;
+
+    a {
+      color: $sec;
+    }
   }
 
   .box {

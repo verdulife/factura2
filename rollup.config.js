@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
 import url from "@rollup/plugin-url";
 import svelte from "rollup-plugin-svelte";
 import babel from "@rollup/plugin-babel";
@@ -53,6 +54,7 @@ export default {
         dedupe: ["svelte"],
       }),
       commonjs(),
+      json(),
 
       legacy &&
         babel({
@@ -123,6 +125,7 @@ export default {
         dedupe: ["svelte"],
       }),
       commonjs(),
+      json(),
     ],
     external: Object.keys(pkg.dependencies).concat(require("module").builtinModules),
 

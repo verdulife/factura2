@@ -2,15 +2,15 @@
 
 ### TODOS:
 
+- [x] Email de sugerencias
+- [x] pagina privacidad
+- [x] landing: boton a tus datos si no estan rellenados + info
+- [ ] cookies
 - [ ] Rediseñar facturas/ppto/albaranes
-- [ ] Cambiar url "ajustes" por "tus datos"
 - [ ] Sync with google drive
-- [ ] Email de sugerencias
 - [ ] Rediseñar error page
 - [ ] seccion FAQ
 - [ ] enlaces a wikipedia o mejor explicacion
-- [ ] landing: boton a tus datos si no estan rellenados + info
-- [ ] landing: coming soon text on bottom
 - [ ] facturas: boton pdf en cada factura
 - [ ] facturas: boton enviar por email en cada factura
 - [ ] facturas: descarga multiple de facturas
