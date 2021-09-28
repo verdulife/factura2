@@ -133,6 +133,7 @@
       pushClient(billData.client);
       pushProduct(billData.items);
 
+      $userData._updated = new Date();
       goto("/facturas");
     } else alert("⚠ No has añadido ningun concepto ⚠");
   }
@@ -159,6 +160,7 @@
   <section class="header col fcenter xfill">
     <img src="/facturas.svg" alt="Facturas" />
     <h1>Nueva factura</h1>
+    <a href="/facturas" class="btn outwhite semi">VOLVER A FACTURAS</a>
   </section>
 
   <form class="bill-data col acenter xfill" on:submit|preventDefault={pushBill}>
@@ -352,10 +354,15 @@
       max-width: 900px;
       font-size: 5vh;
       line-height: 1;
+      margin-bottom: 20px;
 
       @media (max-width: $mobile) {
         margin-bottom: 20px;
       }
+    }
+
+    a.btn {
+      font-size: 12px;
     }
   }
 

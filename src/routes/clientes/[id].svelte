@@ -1,13 +1,9 @@
 <script>
-  import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
   import { clients, userData } from "../../lib/stores";
-  import { toast } from "../../components/toaster";
 
   const { page } = stores();
   let clientData = $clients.filter((client) => client._id === $page.params.id)[0];
-  let lineData = {};
-  let loading = false;
 
   function deleteClient() {
     const check = confirm("¿Borrar definitivamente?");
@@ -16,6 +12,7 @@
 
     $clients.splice($clients.indexOf(clientData), 1);
     $clients = $clients;
+    $userData._updated = new Date();
     goto("/clients");
   }
 
@@ -25,7 +22,8 @@
       else return client;
     });
 
-    toast("✔ Datos guardados correctamente");
+    $userData._updated = new Date();
+    alert("✔ Datos guardados correctamente");
   }
 </script>
 
@@ -60,6 +58,8 @@
         <a href="/presupuestos/nueva?client={encodeURIComponent(JSON.stringify(clientData))}" class="btn link semi">GENERAR PRESUPUESTO</a>
         <button class="err semi" on:click={deleteClient}>ELIMINAR CLIENTE</button>
       </div>
+
+      <a href="/clientes" class="btn outwhite semi">VOLVER A CLIENTES</a>
     </section>
 
     <form class="client-data col acenter xfill" on:submit|preventDefault={pushClient}>
@@ -152,6 +152,11 @@
     }
 
     .io-wrapper {
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
+    a.btn {
       font-size: 12px;
     }
   }

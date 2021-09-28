@@ -1,6 +1,6 @@
 <script>
   import { goto } from "@sapper/app";
-  import { clients } from "../../lib/stores";
+  import { clients, userData } from "../../lib/stores";
 
   let clientData = {};
 
@@ -8,6 +8,7 @@
     clientData._id = Date.now().toString();
     $clients = [...$clients, clientData];
 
+    $userData._updated = new Date();
     goto("/clientes");
   }
 </script>
@@ -33,51 +34,100 @@
   <section class="header col fcenter xfill">
     <img src="/clientes.svg" alt="Clientes" />
     <h1>Nuevo cliente</h1>
+    <a href="/clientes" class="btn outwhite semi">VOLVER A CLIENTES</a>
   </section>
 
-  <form class="client-data col acenter xfill" on:submit|preventDefault={pushClient}>
+  <form
+    class="client-data col acenter xfill"
+    on:submit|preventDefault={pushClient}
+  >
     <div class="box round col xfill">
       <h2>Datos del cliente</h2>
-      <p class="notice">Genera clientes para cargar sus datos rapidamente en tus facturas, preuspuestos y albaranes.</p>
+      <p class="notice">
+        Genera clientes para cargar sus datos rapidamente en tus facturas,
+        preuspuestos y albaranes.
+      </p>
 
       <div class="input-wrapper col xfill">
         <label for="legal_name">NOMBRE FISCAL</label>
-        <input type="text" id="leagal_name" bind:value={clientData.legal_name} class="xfill" required />
+        <input
+          type="text"
+          id="leagal_name"
+          bind:value={clientData.legal_name}
+          class="xfill"
+          required
+        />
       </div>
 
       <div class="row xfill">
         <div class="input-wrapper col xhalf">
           <label for="legal_id">CIF/NIF</label>
-          <input type="text" id="leagal_id" bind:value={clientData.legal_id} class="xfill" required />
+          <input
+            type="text"
+            id="leagal_id"
+            bind:value={clientData.legal_id}
+            class="xfill"
+            required
+          />
         </div>
 
         <div class="input-wrapper col xhalf">
           <label for="contact">Conacto</label>
-          <input type="text" id="contact" bind:value={clientData.contact} class="xfill" required />
+          <input
+            type="text"
+            id="contact"
+            bind:value={clientData.contact}
+            class="xfill"
+            required
+          />
         </div>
       </div>
 
       <div class="row xfill">
         <div class="input-wrapper col xhalf">
           <label for="address">DIRECCION FISCAL</label>
-          <input type="text" id="address" bind:value={clientData.address} class="xfill" required />
+          <input
+            type="text"
+            id="address"
+            bind:value={clientData.address}
+            class="xfill"
+            required
+          />
         </div>
 
         <div class="col xhalf">
           <label for="cp">Código postal</label>
-          <input type="text" id="cp" bind:value={clientData.cp} class="xfill" required />
+          <input
+            type="text"
+            id="cp"
+            bind:value={clientData.cp}
+            class="xfill"
+            required
+          />
         </div>
       </div>
 
       <div class="row xfill">
         <div class="input-wrapper col xhalf">
           <label for="city">POBLACIÓN</label>
-          <input type="text" id="city" bind:value={clientData.city} class="xfill" required />
+          <input
+            type="text"
+            id="city"
+            bind:value={clientData.city}
+            class="xfill"
+            required
+          />
         </div>
 
         <div class="input-wrapper col xhalf">
           <label for="country">País</label>
-          <input type="text" id="country" bind:value={clientData.country} class="xfill" required />
+          <input
+            type="text"
+            id="country"
+            bind:value={clientData.country}
+            class="xfill"
+            required
+          />
         </div>
       </div>
     </div>
@@ -109,10 +159,11 @@
       max-width: 900px;
       font-size: 5vh;
       line-height: 1;
+      margin-bottom: 20px;
+    }
 
-      @media (max-width: $mobile) {
-        margin-bottom: 20px;
-      }
+    a.btn {
+      font-size: 12px;
     }
   }
 

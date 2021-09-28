@@ -3,7 +3,6 @@
   import { stores, goto } from "@sapper/app";
   import { budgets, userData, bills, products } from "../../lib/stores";
   import { POST, roundWithTwoDecimals } from "../../lib/functions";
-  import { toast } from "../../components/toaster";
   import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
@@ -71,6 +70,7 @@
     bill.number = number;
 
     $bills = [...$bills, bill];
+    $userData._updated = new Date();
     goto("/facturas");
   }
 
@@ -80,6 +80,7 @@
     if (check) {
       $budgets.splice($budgets.indexOf(budgetData), 1);
       $budgets = $budgets;
+      $userData._updated = new Date();
       goto("/presupuestos");
     }
   }
@@ -172,7 +173,8 @@
         else return budget;
       });
 
-      toast("✔ Datos guardados correctamente");
+      $userData._updated = new Date();
+      alert("✔ Datos guardados correctamente");
     } else alert("⚠ No has añadido ningun concepto ⚠");
   }
 </script>
@@ -208,6 +210,8 @@
         <button class="link semi" on:click={generateBill}>GENERAR FACTURA</button>
         <button class="err semi" on:click={deleteBudget}>ELIMINAR PRESUPUESTO</button>
       </div>
+
+      <a href="/presupuestos" class="btn outwhite semi">VOLVER A PRESUPUESTOS</a>
 
       {#if loading}
         <div class="outer-loader col fcenter fill" transition:fade={{ duration: 100 }}>
@@ -418,6 +422,11 @@
     }
 
     .io-wrapper {
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
+    a.btn {
       font-size: 12px;
     }
 

@@ -19,7 +19,7 @@
   </div>
 
   <div class="message col fcenter">
-    <h1>Ups... esto no son facturas</h1>
+    <h1>Ups, esto no son facturas...</h1>
     <p>Posiblemente la página que estas buscando no exista o se haya modificado</p>
     <a href="/" class="btn succ semi">VOLVER AL INICIO</a>
 
@@ -57,6 +57,7 @@
   .message {
     z-index: 2;
     text-align: center;
+    padding: 20px;
 
     h1 {
       line-height: 1;

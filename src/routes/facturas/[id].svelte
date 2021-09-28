@@ -3,7 +3,6 @@
   import { stores, goto } from "@sapper/app";
   import { bills, userData, products } from "../../lib/stores";
   import { POST, roundWithTwoDecimals } from "../../lib/functions";
-  import { toast } from "../../components/toaster";
   import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
@@ -61,6 +60,7 @@
     if (check) {
       $bills.splice($bills.indexOf(billData), 1);
       $bills = $bills;
+      $userData._updated = new Date();
       goto("/facturas");
     }
   }
@@ -153,7 +153,8 @@
         else return bill;
       });
 
-      toast("✔ Datos guardados correctamente");
+      $userData._updated = new Date();
+      alert("✔ Datos guardados correctamente");
     } else alert("⚠ No has añadido ningun concepto ⚠");
   }
 </script>
@@ -189,6 +190,8 @@
         <button class="link semi" on:click={generateDelivery}>GENERAR ALBARÁN</button>
         <button class="err semi" on:click={deleteBill}>ELIMINAR FACTURA</button>
       </div>
+
+      <a href="/facturas" class="btn outwhite semi">VOLVER A FACTURAS</a>
 
       {#if loading}
         <div class="outer-loader col fcenter fill" transition:fade={{ duration: 100 }}>
@@ -398,6 +401,11 @@
     }
 
     .io-wrapper {
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
+    a.btn {
       font-size: 12px;
     }
 

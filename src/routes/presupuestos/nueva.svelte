@@ -131,6 +131,7 @@
       pushClient(budgetData.client);
       pushProduct(budgetData.items);
 
+      $userData._updated = new Date();
       goto("/presupuestos");
     } else alert("⚠ No has añadido ningun concepto ⚠");
   }
@@ -157,6 +158,7 @@
   <section class="header col fcenter xfill">
     <img src="/presupuestos.svg" alt="Presupuestos" />
     <h1>Nuevo presupuesto</h1>
+    <a href="/presupuestos" class="btn outwhite semi">VOLVER A PRESUPUESTOS</a>
   </section>
 
   <form class="budget-data col acenter xfill" on:submit|preventDefault={pushBudget}>
@@ -351,10 +353,15 @@
       max-width: 900px;
       font-size: 5vh;
       line-height: 1;
+      margin-bottom: 20px;
 
       @media (max-width: $mobile) {
         margin-bottom: 20px;
       }
+    }
+
+    a.btn {
+      font-size: 12px;
     }
   }
 
