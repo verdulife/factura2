@@ -7,6 +7,7 @@
 - [ ] SEO
 
 ### TODOS 🐌:
+- [ ] herramienta: control de gastos (tickets de compra)
 - [ ] clientes && clientes/id: boton conctacto
 - [ ] facturas && pptos: boton pdf
 - [ ] Rediseñar facturas/ppto/albaranes
