@@ -91,7 +91,7 @@
             {/each}
           </select>
 
-          <div class="clear-btn row acenter" on:click={clearFilters}>LIMPIAR FILTROS</div>
+          <div class="clear-btn row fcenter" on:click={clearFilters}>🗑</div>
         </div>
       {/if}
     </div>
@@ -201,18 +201,29 @@
           width: 50%;
         }
       }
-    }
 
-    .clear-btn {
-      cursor: pointer;
-      background: $border;
-      font-size: 12px;
-      font-weight: bold;
-      color: $base;
-      border: 1px solid $border;
-      padding: 1em 2em;
-      user-select: none;
-      -webkit-user-drag: none;
+      .clear-btn {
+        cursor: pointer;
+        width: 48px;
+        background: $border;
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        color: $base;
+        border: 1px solid $border;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+
+      @media (max-width: $mobile) {
+        input {
+          width: 100%;
+        }
+
+        select {
+          width: calc(50% - 24px);
+        }
+      }
     }
   }
 

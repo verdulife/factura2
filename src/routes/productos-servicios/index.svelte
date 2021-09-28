@@ -52,7 +52,7 @@
 
         <div class="filter-wrapper row xfill">
           <input type="text" class="out grow" bind:value={searchTerm} placeholder="Buscar por nombre o precio" />
-          <div class="clear-btn row acenter" on:click={clearFilters}>LIMPIAR FILTROS</div>
+          <div class="clear-btn row fcenter" on:click={clearFilters}>🗑</div>
         </div>
       {/if}
     </div>
@@ -142,23 +142,28 @@
     .filter-wrapper {
       align-items: stretch;
 
-      select {
-        @media (max-width: $mobile) {
-          width: 50%;
+      input {
+        background: $white;
+      }
+
+      .clear-btn {
+        cursor: pointer;
+        width: 48px;
+        background: $border;
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        color: $base;
+        border: 1px solid $border;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+
+      @media (max-width: $mobile) {
+        input {
+          width: calc(100% - 48px);
         }
       }
-    }
-
-    .clear-btn {
-      cursor: pointer;
-      background: $border;
-      font-size: 12px;
-      font-weight: bold;
-      color: $base;
-      border: 1px solid $border;
-      padding: 1em 2em;
-      user-select: none;
-      -webkit-user-drag: none;
     }
   }
 

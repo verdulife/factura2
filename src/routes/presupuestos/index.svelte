@@ -44,7 +44,7 @@
 </script>
 
 <svelte:head>
-<title>Presupuestos | Facturas gratis</title>
+  <title>Presupuestos | Facturas gratis</title>
   <meta property="og:title" content="Presupuestos | Facturas gratis" />
   <meta property="og:site_name" content="Facturas gratis" />
 
@@ -62,7 +62,7 @@
 
 <div class="scroll">
   <section class="header col fcenter xfill">
-    <img src="/presupuestos.svg" alt="Presupuestos">
+    <img src="/presupuestos.svg" alt="Presupuestos" />
     <h1>{tools[1].title}</h1>
     <p>{tools[1].desc}</p>
   </section>
@@ -91,7 +91,7 @@
             {/each}
           </select>
 
-          <div class="clear-btn row acenter" on:click={clearFilters}>LIMPIAR FILTROS</div>
+          <div class="clear-btn row fcenter" on:click={clearFilters}>🗑</div>
         </div>
       {/if}
     </div>
@@ -187,27 +187,41 @@
     }
   }
 
-  .list-filter {
-    .filter-wrapper {
-      align-items: stretch;
+  .filter-wrapper {
+    align-items: stretch;
 
-      select {
-        @media (max-width: $mobile) {
-          width: 50%;
-        }
+    input,
+    select {
+      background: $white;
+    }
+
+    select {
+      @media (max-width: $mobile) {
+        width: 50%;
       }
     }
 
     .clear-btn {
       cursor: pointer;
+      width: 48px;
       background: $border;
+      text-align: center;
       font-size: 12px;
       font-weight: bold;
       color: $base;
       border: 1px solid $border;
-      padding: 1em 2em;
       user-select: none;
       -webkit-user-drag: none;
+    }
+
+    @media (max-width: $mobile) {
+      input {
+        width: 100%;
+      }
+
+      select {
+        width: calc(50% - 24px);
+      }
     }
   }
 

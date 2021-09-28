@@ -13,176 +13,61 @@
 </svelte:head>
 
 <div class="col fcenter fill">
-  <div class="error row jbetween aend">
-    <div class="number">4</div>
-    <div class="illustration">
-      <div class="circle" />
-      <div class="clip">
-        <div class="paper">
-          <div class="face">
-            <div class="eyes">
-              <div class="eye eye-left" />
-              <div class="eye eye-right" />
-            </div>
-            <div class="rosyCheeks rosyCheeks-left" />
-            <div class="rosyCheeks rosyCheeks-right" />
-            <div class="mouth" />
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="number">4</div>
+  <div class="video-wrapper">
+    <video src="/no-bills.mp4" playsinline muted autoplay loop />
+    <div class="video-overlay" />
   </div>
 
-  <h1>Página no encontrada</h1>
-  <a href="/" class="btn succ semi">VOLVER AL INICIO</a>
+  <div class="message col fcenter">
+    <h1>Ups... esto no son facturas</h1>
+    <p>Posiblemente la página que estas buscando no exista o se haya modificado</p>
+    <a href="/" class="btn succ semi">VOLVER AL INICIO</a>
 
-  {#if dev && error.stack}
-    <pre class="xfill">{error.stack}</pre>
-  {/if}
+    {#if dev && error.stack}
+      <pre class="xfill">{error.stack}</pre>
+    {/if}
+  </div>
 </div>
 
 <style lang="scss">
-  .error {
-    box-sizing: unset !important;
-    margin-bottom: 40px;
-
-    *,
-    *:before {
-      box-sizing: unset !important;
-    }
-  }
-
-  .number {
-    color: $pri;
-    font-weight: bold;
-    font-size: 15rem;
-    line-height: 1;
-  }
-
-  .illustration {
-    position: relative;
-    width: 12.2rem;
-    margin: 0 2.1rem;
-  }
-
-  .circle {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 12.2rem;
-    height: 11.4rem;
-    border-radius: 50%;
-    background: $pri;
-  }
-
-  .clip {
-    position: absolute;
-    bottom: 0.3rem;
-    left: 50%;
-    transform: translateX(-50%);
-    overflow: hidden;
-    width: 12.5rem;
-    height: 13rem;
-    border-radius: 0 0 50% 50%;
-  }
-
-  .paper {
-    position: absolute;
-    bottom: -0.3rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 9.2rem;
-    height: 12.4rem;
-    border: 0.3rem solid $pri;
-    background: $white;
-    border-radius: 0.8rem;
-  }
-
-  .face {
-    position: relative;
-    margin-top: 2.3rem;
-  }
-
-  .eyes {
+  .video-wrapper {
     position: absolute;
     top: 0;
-    left: 2.4rem;
-    width: 4.6rem;
-    height: 0.8rem;
-  }
-
-  .eye {
-    position: absolute;
-    bottom: 0;
-    width: 0.8rem;
-    height: 0.8rem;
-    border-radius: 50%;
-    background: $pri;
-    animation-name: eye;
-    animation-duration: 4s;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
-  }
-
-  .eye-left {
     left: 0;
-  }
+    width: 100%;
+    height: 100%;
 
-  .eye-right {
-    right: 0;
-  }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-  @keyframes eye {
-    0% {
-      height: 0.8rem;
-    }
-    50% {
-      height: 0.8rem;
-    }
-    52% {
-      height: 0.1rem;
-    }
-    54% {
-      height: 0.8rem;
-    }
-    100% {
-      height: 0.8rem;
+    .video-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: $white url("/overlay.png");
+      opacity: 0.4;
     }
   }
 
-  .rosyCheeks {
-    position: absolute;
-    top: 1.6rem;
-    width: 1rem;
-    height: 0.2rem;
-    border-radius: 50%;
-    background: lightcoral;
-  }
+  .message {
+    z-index: 2;
+    text-align: center;
 
-  .rosyCheeks-left {
-    left: 1.4rem;
-  }
+    h1 {
+      line-height: 1;
+      margin-bottom: 20px;
+    }
 
-  .rosyCheeks-right {
-    right: 1.4rem;
-  }
-
-  .mouth {
-    position: absolute;
-    top: 3.1rem;
-    left: 50%;
-    width: 1.6rem;
-    height: 0.2rem;
-    border-radius: 0.1rem;
-    transform: translateX(-50%);
-    background: $pri;
-  }
-
-  a.btn {
-    color: $white;
-    text-transform: uppercase;
-    font-size: 12px;
-    margin: 3em 0;
+    a.btn {
+      color: $white;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin: 3em 0;
+    }
   }
 </style>

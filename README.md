@@ -1,12 +1,13 @@
 # ⚠ Under construction ⚠
 
 ### TODOS para 🚀:
-- [ ] error page mobile
-- [ ] arreglar boton "limpiar filtros"
+- [x] error page mobile
+- [x] arreglar boton "limpiar filtros"
 - [ ] uppercase mensaje borrar db
 - [ ] todas/nueva: boton atras en header
 - [ ] facturas && pptos /id: rediseñar cta box
 - [ ] productos: diseñar modal new product
+- [ ] rediseñar coming soon
 - [ ] SEO
 
 ### TODOS 🐌:
