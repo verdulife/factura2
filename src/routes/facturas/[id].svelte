@@ -35,7 +35,7 @@
 
       const link = document.createElement("a");
       link.href = blob;
-      link.download = `Factura_${data.number}_${data.client.legal_id}.pdf`;
+      link.download = `Factura_${numerationFormat(data.number, data.date.year)}_${data.client.legal_name}.pdf`;
       link.click();
 
       setTimeout(() => {
@@ -180,7 +180,7 @@
   {#if billData}
     <section class="header col fcenter xfill">
       <img src="/facturas.svg" alt="Factura" />
-      <h1>Factura nº{numerationFormat(billData.number, billData.date.year)}</h1>
+      <h1>Factura {numerationFormat(billData.number, billData.date.year)}</h1>
       <p>
         Con fecha {billData.date.day}/{billData.date.month}/{billData.date.year}
       </p>
@@ -379,7 +379,7 @@
     padding: 60px;
 
     @media (max-width: $mobile) {
-      padding: 40px;
+      padding: 40px 20px;
     }
 
     img {
@@ -389,7 +389,7 @@
 
     h1 {
       max-width: 900px;
-      font-size: 5vh;
+      font-size: 4vh;
       line-height: 1;
       margin-bottom: 10px;
     }

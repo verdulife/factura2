@@ -18,7 +18,7 @@ export async function post(req, res) {
     size: [mm(210), mm(297)],
     margin: 0,
     info: {
-      Title: `Factura_${data.number}_${data.client.legal_id}`,
+      Title: `Presupuesto_${numerationFormat(data.number, data.date.year)}_${data.client.legal_name}`,
     },
   });
 
@@ -180,7 +180,7 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${data.user.email ? "| e. " + d
   res.setHeader("Content-type", "application/pdf");
   res.setHeader(
     "Content-Disposition",
-    `attachment; filename="Factura_${data.number}_${data.client.legal_id}.pdf"`
+    `attachment; filename="Presupuesto_${numerationFormat(data.number, data.date.year)}_${data.client.legal_name}.pdf"`
   );
 
   doc.pipe(res);

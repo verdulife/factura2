@@ -125,7 +125,7 @@
     padding: 60px;
 
     @media (max-width: $mobile) {
-      padding: 40px;
+      padding: 40px 20px;
     }
 
     img {
@@ -135,7 +135,7 @@
 
     h1 {
       max-width: 900px;
-      font-size: 5vh;
+      font-size: 4vh;
       line-height: 1;
       margin-bottom: 10px;
     }

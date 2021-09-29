@@ -68,7 +68,7 @@
             <div class="col grow">
               <h4>{product.label}</h4>
             </div>
-            <p>{roundWithTwoDecimals(product.price).toFixed(2)}€</p>
+            <p>{roundWithTwoDecimals(product.price).toFixed(2)}{$userData.currency}</p>
           </a>
         </li>
       {/each}

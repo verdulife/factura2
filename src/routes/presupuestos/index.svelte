@@ -1,7 +1,7 @@
 <script>
   import { userData, budgets } from "../../lib/stores";
   import { tools, months } from "../../lib/utils";
-  import { sortByNumber } from "../../lib/functions";
+  import { sortByNumber, roundWithTwoDecimals, numerationFormat } from "../../lib/functions";
 
   let budgetsData = [...$budgets];
   let searchTerm = "";
@@ -110,12 +110,12 @@
                 <p>{budget.client.legal_id}</p>
               </div>
 
-              <h3>{budget.totals.total.toFixed(2)}€</h3>
+              <h3>{roundWithTwoDecimals(budget.totals.total).toFixed(2)}{$userData.currency}</h3>
             </div>
 
             <div class="info row xfill">
               <p>
-                Nº<b>{budget.number}</b> | Fecha: <b>{budget.date.day}/{budget.date.month}/{budget.date.year}</b>
+                <b>{numerationFormat(budget.number, budget.date.year)}</b> | Fecha: <b>{budget.date.day}/{budget.date.month}/{budget.date.year}</b>
               </p>
             </div>
           </a>

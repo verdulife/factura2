@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
   import { budgets, userData, bills, products } from "../../lib/stores";
-  import { POST, roundWithTwoDecimals } from "../../lib/functions";
+  import { POST, roundWithTwoDecimals, numerationFormat } from "../../lib/functions";
   import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
@@ -35,7 +35,7 @@
 
       const link = document.createElement("a");
       link.href = blob;
-      link.download = `Factura_${data.number}_${data.client.legal_id}.pdf`;
+      link.download = `Presupuesto_${numerationFormat(data.number, data.date.year)}_${data.client.legal_name}.pdf`;
       link.click();
 
       setTimeout(() => {
@@ -200,7 +200,7 @@
   {#if budgetData}
     <section class="header col fcenter xfill">
       <img src="/presupuestos.svg" alt="Presupuestos" />
-      <h1>Presupuesto nº {budgetData.number}</h1>
+      <h1>Presupuesto {numerationFormat(budgetData.number, budgetData.date.year)}</h1>
       <p>
         Con fecha {budgetData.date.day}/{budgetData.date.month}/{budgetData.date.year}
       </p>
@@ -344,7 +344,7 @@
 
             <li class="col acenter">
               <p class="label">Total</p>
-              <h3>{roundWithTwoDecimals(budget_total()).toFixed(2)}€</h3>
+              <h3>{roundWithTwoDecimals(budget_total()).toFixed(2)}{$userData.currency}</h3>
             </li>
           </ul>
 
@@ -395,7 +395,7 @@
     padding: 60px;
 
     @media (max-width: $mobile) {
-      padding: 40px;
+      padding: 40px 20px;
     }
 
     img {
@@ -405,7 +405,7 @@
 
     h1 {
       max-width: 900px;
-      font-size: 5vh;
+      font-size: 4vh;
       line-height: 1;
       margin-bottom: 10px;
     }

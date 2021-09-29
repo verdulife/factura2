@@ -1,7 +1,7 @@
 <script>
   import { userData, bills } from "../../lib/stores";
   import { tools, months } from "../../lib/utils";
-  import { sortByNumber, roundWithTwoDecimals } from "../../lib/functions";
+  import { sortByNumber, roundWithTwoDecimals, numerationFormat } from "../../lib/functions";
 
   let billsData = [...$bills];
   let searchTerm = "";
@@ -110,12 +110,12 @@
                 <p>{bill.client.legal_id}</p>
               </div>
 
-              <h3>{roundWithTwoDecimals(bill.totals.total).toFixed(2)}€</h3>
+              <h3>{roundWithTwoDecimals(bill.totals.total).toFixed(2)}{$userData.currency}</h3>
             </div>
 
             <div class="info row xfill">
               <p>
-                Nº<b>{bill.number}</b> | Fecha: <b>{bill.date.day}/{bill.date.month}/{bill.date.year}</b>
+                <b>{numerationFormat(bill.number, bill.date.year)}</b> | Fecha: <b>{bill.date.day}/{bill.date.month}/{bill.date.year}</b>
               </p>
             </div>
           </a>

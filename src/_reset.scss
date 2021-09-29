@@ -24,7 +24,11 @@
   }
 
   @media (max-width: $tablet) {
-    cursor: default;
+    cursor: default !important;
+
+    &:hover {
+      all: unset !important;
+    }
   }
 }
 

@@ -293,7 +293,7 @@
 
           <li class="col acenter">
             <p class="label">Total</p>
-            <h3>{roundWithTwoDecimals(bill_total()).toFixed(2)}€</h3>
+            <h3>{roundWithTwoDecimals(bill_total()).toFixed(2)}{$userData.currency}</h3>
           </li>
         </ul>
 
@@ -311,7 +311,7 @@
         <input type="number" id="amount" bind:value={lineData.amount} min="1" class="out" placeholder="CANT" />
         <input type="text" id="label" bind:value={lineData.label} class="out grow" placeholder="CONCEPTO" />
         <input type="number" id="dto" bind:value={lineData.dto} min="0" max="100" class="out" placeholder="DTO %" />
-        <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="UNIDAD €" />
+        <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="UNIDAD {$userData.currency}" />
       </div>
 
       <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR PRODUCTO/SERVICIO</div>
