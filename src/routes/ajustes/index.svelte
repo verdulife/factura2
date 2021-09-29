@@ -141,8 +141,9 @@
     if (user.phone || user.email) {
       user._updated = new Date();
       $userData = user;
+      alert("✔ Datos guardados correctamente");
       goto("/");
-    } else alert("⚠ No has añadido un método de contacto ⚠");
+    } else alert("⚠ No has añadido un método de contacto");
   }
 </script>
 
