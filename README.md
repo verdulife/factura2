@@ -2,14 +2,15 @@
 
 ### TODOS para 🚀:
 - [ ] facturas && pptos /id: rediseñar cta box
+- [ ] numeracion con serie anual (solo visual)
+- [ ] clientes && clientes/id: boton conctacto
+- [ ] facturas && pptos: boton pdf
 - [ ] productos: diseñar modal new product
 - [ ] rediseñar coming soon
 - [ ] SEO
 
 ### TODOS 🐌:
 - [ ] herramienta: control de gastos (tickets de compra)
-- [ ] clientes && clientes/id: boton conctacto
-- [ ] facturas && pptos: boton pdf
 - [ ] Rediseñar facturas/ppto/albaranes
 - [ ] Wiki page && seccion FAQ
 - [ ] pasar localStorage a preload

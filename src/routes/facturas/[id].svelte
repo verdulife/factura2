@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
   import { bills, userData, products } from "../../lib/stores";
-  import { POST, roundWithTwoDecimals } from "../../lib/functions";
+  import { POST, roundWithTwoDecimals, numerationFormat } from "../../lib/functions";
   import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
@@ -180,15 +180,20 @@
   {#if billData}
     <section class="header col fcenter xfill">
       <img src="/facturas.svg" alt="Factura" />
-      <h1>Factura nº {billData.number}</h1>
+      <h1>Factura nº{numerationFormat(billData.number)}</h1>
       <p>
         Con fecha {billData.date.day}/{billData.date.month}/{billData.date.year}
       </p>
 
       <div class="io-wrapper row jcenter xfill">
         <button class="succ semi" on:click={downloadBill}>DESCARGAR FACTURA</button>
-        <button class="link semi" on:click={generateDelivery}>GENERAR ALBARÁN</button>
-        <button class="err semi" on:click={deleteBill}>ELIMINAR FACTURA</button>
+        <select class="out semi">
+          <option value="" disabled selected>OTRAS ACCIONES</option>
+          <option value="">CREAR PRESUPUESTO</option>
+          <option value="">CREAR ALBARÁN</option>
+          <option value="">DUPLICAR FACTURA</option>
+          <option value="">BORRAR FACTURA</option>
+        </select>
       </div>
 
       <a href="/facturas" class="btn outwhite semi">VOLVER A FACTURAS</a>
@@ -403,6 +408,11 @@
     .io-wrapper {
       font-size: 12px;
       margin-bottom: 20px;
+
+      select {
+        background: $white;
+        border-width: 2px;
+      }
     }
 
     a.btn {
