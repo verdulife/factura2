@@ -42,8 +42,7 @@ export async function post(req, res) {
       `${data.user.legal_name} | ${data.user.legal_id}
 ${data.user.street},
 ${data.user.city}, ${data.user.cp} (${data.user.country})
-${data.user.phone ? "t." + data.user.phone : ""} ${
-        data.user.email ? "| e. " + data.user.email : ""
+${data.user.phone ? "t." + data.user.phone : ""} ${data.user.email ? "| e. " + data.user.email : ""
       }`,
       mm(68),
       mm(27),
@@ -56,8 +55,7 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${
       `${data.user.legal_name} | ${data.user.legal_id}
 ${data.user.street},
 ${data.user.city}, ${data.user.cp} (${data.user.country})
-${data.user.phone ? "t." + data.user.phone : ""} ${
-        data.user.email ? "| e. " + data.user.email : ""
+${data.user.phone ? "t." + data.user.phone : ""} ${data.user.email ? "| e. " + data.user.email : ""
       }`,
       mm(25),
       mm(27),
@@ -68,7 +66,7 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${
   }
 
   doc.text(
-    `${data.date.year.toString().slice(-2)}-${numerationFormat(data.number)}`,
+    numerationFormat(data.number, data.date.year),
     mm(168),
     mm(31)
   );
@@ -107,8 +105,7 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${
 
   if (data.totals.ret > 0) {
     doc.text(
-      `${roundWithTwoDecimals(data.totals.base).toFixed(2)}${
-        data.user.currency
+      `${roundWithTwoDecimals(data.totals.base).toFixed(2)}${data.user.currency
       }`,
       mm(63.5),
       mm(238)
@@ -118,8 +115,7 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${
     doc
       .fontSize(8)
       .text(
-        `-${roundWithTwoDecimals(data.totals.ret).toFixed(2)}${
-          data.user.currency
+        `-${roundWithTwoDecimals(data.totals.ret).toFixed(2)}${data.user.currency
         }`,
         mm(96),
         mm(238)
@@ -129,8 +125,7 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${
     doc
       .fontSize(8)
       .text(
-        `${roundWithTwoDecimals(data.totals.iva).toFixed(2)}${
-          data.user.currency
+        `${roundWithTwoDecimals(data.totals.iva).toFixed(2)}${data.user.currency
         }`,
         mm(128),
         mm(238)
@@ -139,16 +134,14 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${
     doc
       .fillColor("#fff")
       .text(
-        `${roundWithTwoDecimals(data.totals.total).toFixed(2)}${
-          data.user.currency
+        `${roundWithTwoDecimals(data.totals.total).toFixed(2)}${data.user.currency
         }`,
         mm(154),
         mm(238)
       );
   } else {
     doc.text(
-      `${roundWithTwoDecimals(data.totals.base).toFixed(2)}${
-        data.user.currency
+      `${roundWithTwoDecimals(data.totals.base).toFixed(2)}${data.user.currency
       }`,
       mm(79.5),
       mm(238)
@@ -158,8 +151,7 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${
     doc
       .fontSize(8)
       .text(
-        `${roundWithTwoDecimals(data.totals.iva).toFixed(2)}${
-          data.user.currency
+        `${roundWithTwoDecimals(data.totals.iva).toFixed(2)}${data.user.currency
         }`,
         mm(111.5),
         mm(238)
@@ -168,8 +160,7 @@ ${data.user.phone ? "t." + data.user.phone : ""} ${
     doc
       .fillColor("#fff")
       .text(
-        `${roundWithTwoDecimals(data.totals.total).toFixed(2)}${
-          data.user.currency
+        `${roundWithTwoDecimals(data.totals.total).toFixed(2)}${data.user.currency
         }`,
         mm(137),
         mm(238)

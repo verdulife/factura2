@@ -180,7 +180,7 @@
   {#if billData}
     <section class="header col fcenter xfill">
       <img src="/facturas.svg" alt="Factura" />
-      <h1>Factura nº{numerationFormat(billData.number)}</h1>
+      <h1>Factura nº{numerationFormat(billData.number, billData.date.year)}</h1>
       <p>
         Con fecha {billData.date.day}/{billData.date.month}/{billData.date.year}
       </p>

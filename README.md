@@ -1,8 +1,8 @@
 # ⚠ Under construction ⚠
 
 ### TODOS para 🚀:
-- [ ] facturas && pptos /id: rediseñar cta box
 - [ ] numeracion con serie anual (solo visual)
+- [ ] facturas && pptos /id: rediseñar cta box
 - [ ] clientes && clientes/id: boton conctacto
 - [ ] facturas && pptos: boton pdf
 - [ ] productos: diseñar modal new product
