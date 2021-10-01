@@ -1,10 +1,17 @@
 <script>
+  import { fade, slide } from "svelte/transition";
   import { userData, products } from "../../lib/stores";
   import { roundWithTwoDecimals } from "../../lib/functions";
   import { tools } from "../../lib/utils";
 
   let productsData = [...$products];
+  let productData = {};
+  let modal = false;
   let searchTerm = "";
+
+  function togModal() {
+    modal = !modal;
+  }
 
   $: filteredProducts = productsData.filter((product) => {
     const term = searchTerm.toLowerCase();
@@ -16,6 +23,20 @@
 
   function clearFilters() {
     searchTerm = "";
+  }
+
+  function pushProduct() {
+    if (!$products.some((p) => p.label === productData.label && p.price === productData.price)) {
+      productData._id = Date.now().toString();
+
+      $products = [...$products, productData];
+      productsData = [...$products];
+      productData = {};
+
+      togModal();
+    } else {
+      alert("⚠ Este producto/servicio ya existe");
+    }
   }
 </script>
 
@@ -46,9 +67,9 @@
   {#if $userData.legal_name !== undefined}
     <div class="list-filter col acenter xfill">
       {#if productsData.length <= 0}
-        <a class="btn succ semi" href="/productos-servicios/nueva">CREA TU PRIMER PRODUCTO</a>
+        <button class="succ semi" on:click={togModal}>CREA TU PRIMER PRODUCTO</button>
       {:else}
-        <a class="new-btn btn succ semi" href="/productos-servicios/nueva">NUEVO PRODUCTO</a>
+        <button class="new-btn succ semi" on:click={togModal}>NUEVO PRODUCTO</button>
 
         <div class="filter-wrapper row xfill">
           <input type="text" class="out grow" bind:value={searchTerm} placeholder="Buscar por nombre o precio" />
@@ -74,6 +95,28 @@
       {/each}
       <div class="fix-bottom row xfill" />
     </ul>
+
+    {#if modal}
+      <div class="outer" on:click={togModal} transition:fade />
+      <div class="modal box round" transition:slide>
+        <form class="col" on:submit|preventDefault={pushProduct}>
+          <div class="col xfill">
+            <label for="productLabel">NOMBRE</label>
+            <input class="xfill" id="productLabel" type="text" bind:value={productData.label} placeholder="Ej. Hora de trabajo" />
+          </div>
+
+          <div class="col xfill">
+            <label for="productPrice">PRECIO € (sin impuestos)</label>
+            <input class="xfill" type="number" step="0.01" bind:value={productData.price} placeholder="Ej. 25€" />
+          </div>
+
+          <div class="row fcenter xfill">
+            <button class="succ semi">CREAR</button>
+            <a class="btn out semi" on:click={togModal}>CANCELAR</a>
+          </div>
+        </form>
+      </div>
+    {/if}
   {:else}
     <div class="first col acenter xfill">
       <h2>Primeros pasos</h2>
@@ -124,6 +167,58 @@
 
   .new-btn {
     margin-bottom: 40px;
+  }
+
+  .outer,
+  .modal {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    transition: 200ms;
+    z-index: 99;
+  }
+
+  .outer {
+    cursor: zoom-out;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(2px);
+  }
+
+  .modal {
+    bottom: 50%;
+    right: 0;
+    transform: translateY(50%);
+    margin: 0 auto;
+    width: 100%;
+    max-width: 400px;
+    background: $white;
+    padding: 40px 30px;
+
+    @media (max-width: $mobile) {
+      bottom: 0;
+      transform: unset;
+    }
+
+    label {
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    input {
+      border-bottom: 1px solid $border;
+      margin-bottom: 30px;
+
+      &:focus {
+        border-color: $pri;
+      }
+    }
+
+    button,
+    a.btn {
+      font-size: 14px;
+      margin: 0 5px;
+    }
   }
 
   .list-filter,

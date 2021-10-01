@@ -2,8 +2,8 @@
 
 ### TODOS para 🚀:
 
-- [ ] facturas && pptos /id: rediseñar cta box
 - [ ] productos: diseñar modal new product
+- [ ] facturas && pptos /id: rediseñar cta box
 - [ ] facturas && pptos: boton pdf
 - [ ] clientes && clientes/id: boton conctacto
 - [ ] rediseñar coming soon
