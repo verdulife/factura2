@@ -27,14 +27,18 @@ export async function get(req, res, next) {
             if (files.length > 0) {
               const fileId = files[0].id;
 
-              drive.files.get({ fileId: fileId, alt: "media" }).then((result) => {
+              drive.files.get({ fileId, alt: "media" }, { responseType: "stream" }).then((result) => {
                 result.data
                   .on("end", () => {
-                    console.log("Done");
+                    console.log("Done downloading file.");
                   })
                   .on("error", (err) => {
-                    console.log("Error", err);
-                  });
+                    console.error("Error downloading file.");
+                  })
+                  .on("data", (d) => {
+                    console.log("Downloading...");
+                  })
+                  .pipe(res);
               });
             } else {
               console.log("no files");
