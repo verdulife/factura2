@@ -9,7 +9,16 @@
   let lineData = {};
 
   function autoBudgetNumber() {
-    return $budgets.length <= 0 ? 1 : Math.max(...$budgets.map((n) => n.number)) + 1;
+    if ($budgets.length <= 0) return 1;
+
+    const currYear = new Date().getFullYear();
+    let currYearsBudgets = [];
+
+    for (let b = 0; b < $budgets.length; ++b) {
+      if ($budgets[b].date.year === currYear) currYearsBudgets = [...currYearsBudgets, $budgets[b]];
+    }
+
+    return currYearsBudgets.length <= 0 ? 1 : Math.max(...currYearsBudgets.map((n) => n.number)) + 1;
   }
 
   budgetData.number = autoBudgetNumber();

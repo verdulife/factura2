@@ -70,12 +70,10 @@
                 <p>{client.legal_id}</p>
               </div>
             </div>
+          </a>
 
-            <div class="info row jbetween xfill">
-              <p>
-                Contacto: <a href={(client.contact.includes("@") ? "mailto:" : "tel:") + client.contact}><b>{client.contact}</b></a>
-              </p>
-            </div>
+          <a class="btn xfill" href={(client.contact.includes("@") ? "mailto:" : "tel:") + client.contact}>
+            <b>{client.contact.includes("@") ? "✉" : "📞"} {client.contact}</b>
           </a>
         </li>
       {/each}
@@ -188,29 +186,27 @@
       padding: 0;
       margin-bottom: 5px;
       transition: 200ms;
+      overflow: hidden;
 
       &:nth-of-type(even) {
         background: $bg;
       }
 
-      &:hover {
-        background: lighten($border, 10%);
-      }
-
       a {
         padding: 1em;
 
-        .title {
-          margin-bottom: 20px;
+        &:hover {
+          background: lighten($border, 10%);
         }
-
-        .info {
-          border-top: 1px solid $border;
-          padding-top: 10px;
-
-          a {
-            padding: 0;
-          }
+      }
+      
+      a.btn {
+        border-top: 1px solid $border;
+        
+        &:hover {
+          background: $success;
+          color: $white;
+          transform: unset;
         }
       }
     }

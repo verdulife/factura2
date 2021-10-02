@@ -9,7 +9,16 @@
   let lineData = {};
 
   function autoBillNumber() {
-    return $bills.length <= 0 ? 1 : Math.max(...$bills.map((n) => n.number)) + 1;
+    if ($bills.length <= 0) return 1;
+
+    const currYear = new Date().getFullYear();
+    let currYearsBills = [];
+
+    for (let b = 0; b < $bills.length; ++b) {
+      if ($bills[b].date.year === currYear) currYearsBills = [...currYearsBills, $bills[b]];
+    }
+
+    return currYearsBills.length <= 0 ? 1 : Math.max(...currYearsBills.map((n) => n.number)) + 1;
   }
 
   billData.number = autoBillNumber();
@@ -453,7 +462,7 @@
       @media (max-width: $mobile) {
         margin-bottom: 10px;
       }
-      
+
       &:nth-of-type(even) {
         background: $bg;
         margin-top: -1px;

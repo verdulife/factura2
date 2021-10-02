@@ -2,13 +2,12 @@
 
 ### TODOS para 🚀:
 
-- [ ] facturas && pptos: boton pdf
-- [ ] clientes && clientes/id: boton conctacto
 - [ ] facturas && pptos /id: rediseñar cta box
 - [ ] SEO
 
 ### TODOS 🐌:
 
+- [ ] facturas && pptos: boton pdf
 - [ ] herramienta: control de gastos (tickets de compra)
 - [ ] Rediseñar facturas/ppto/albaranes
 - [ ] Wiki page && seccion FAQ

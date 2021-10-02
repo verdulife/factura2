@@ -116,7 +116,7 @@
         <form class="col" on:submit|preventDefault={pushProduct}>
           <div class="col xfill">
             <label for="productLabel">NOMBRE</label>
-            <input class="xfill" id="productLabel" type="text" bind:value={productData.label} placeholder="Ej. Hora de trabajo" autofocus />
+            <input class="xfill" id="productLabel" type="text" bind:value={productData.label} placeholder="Ej. Hora de trabajo" />
           </div>
 
           <div class="col xfill">
