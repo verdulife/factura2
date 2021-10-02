@@ -1,3 +1,7 @@
+<script>
+  import Comingsoon from "../../components/Comingsoon.svelte";
+</script>
+
 <svelte:head>
   <title>Proveedores | Facturas gratis</title>
   <meta property="og:title" content="Proveedores | Facturas gratis" />
@@ -15,15 +19,7 @@
   />
 </svelte:head>
 
-<div class="col fcenter fill">
-  <h1>Página en constructión</h1>
-  <p>Disculpa las molestias 👏</p>
-
-  <a href="/" class="btn link semi">VOLVER</a>
-</div>
+<Comingsoon />
 
 <style lang="scss">
-  p {
-    margin-bottom: 40px;
-  }
 </style>

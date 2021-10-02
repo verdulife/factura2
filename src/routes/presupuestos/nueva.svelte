@@ -252,7 +252,7 @@
             <span class="label row">CANT</span>
             <span class="label row grow">CONCEPTO</span>
             <span class="label row">DTO %</span>
-            <span class="label row">UNIDAD {$userData.currency}</span>
+            <span class="label row">PRECIO {$userData.currency}</span>
             <span class="label row">IMPORTE {$userData.currency}</span>
             <span class="label row">&nbsp;</span>
           </li>
@@ -262,7 +262,7 @@
               <input type="number" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
               <input type="text" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
               <input type="number" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
-              <input type="number" bind:value={item.price} step="0.01" class="out" placeholder="UNIDAD {$userData.currency}" />
+              <input type="number" bind:value={item.price} step="0.01" class="out" placeholder="PRECIO {$userData.currency}" />
               <input type="text" value={calcLineTotal(item)} class="out" disabled />
               <input type="text" value="🗑" class="out" on:click={() => removeLine(i)} />
             </li>
@@ -302,7 +302,14 @@
         <div class="input-wrapper col xfill">
           <label for="products_list" style="margin-bottom: 10px">CARGAR DATOS</label>
 
-          <AutoComplete items={$products} bind:selectedItem={lineData} labelFieldName="label" placeholder="Buscar producto" noResultsText="No hay coincidencias" hideArrow />
+          <AutoComplete items={$products} bind:selectedItem={lineData} labelFieldName="label" placeholder="Buscar producto" noResultsText="No hay coincidencias" hideArrow>
+            <div slot="item" let:item>
+              <div class="row aend xfill">
+                <p class="nowrap grow" style="padding-right: 10px;">{item.label}</p>
+                <small><b>{roundWithTwoDecimals(item.price).toFixed(2)}€</b></small>
+              </div>
+            </div>
+          </AutoComplete>
         </div>
       {/if}
 
@@ -310,10 +317,10 @@
         <input type="number" id="amount" bind:value={lineData.amount} min="1" class="out" placeholder="CANT" />
         <input type="text" id="label" bind:value={lineData.label} class="out grow" placeholder="CONCEPTO" />
         <input type="number" id="dto" bind:value={lineData.dto} min="0" max="100" class="out" placeholder="DTO %" />
-        <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="UNIDAD {$userData.currency}" />
+        <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="PRECIO{$userData.currency}" />
       </div>
 
-      <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR PRODUCTO/SERVICIO</div>
+      <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR A LA LISTA</div>
     </div>
 
     <div class="box round col xfill">
@@ -443,6 +450,10 @@
     }
 
     .line {
+      @media (max-width: $mobile) {
+        margin-bottom: 10px;
+      }
+
       &:nth-of-type(even) {
         background: $bg;
         margin-top: -1px;
@@ -507,7 +518,6 @@
         }
       }
     }
-
 
     h-div {
       margin: 40px 0;

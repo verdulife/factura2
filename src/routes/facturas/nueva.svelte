@@ -450,6 +450,10 @@
     }
 
     .line {
+      @media (max-width: $mobile) {
+        margin-bottom: 10px;
+      }
+      
       &:nth-of-type(even) {
         background: $bg;
         margin-top: -1px;

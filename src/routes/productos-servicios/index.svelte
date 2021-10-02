@@ -25,10 +25,22 @@
     searchTerm = "";
   }
 
+  function deleteProduct(product) {
+    const check = confirm("Este producto/servicio se borrara de la lista pero no de los documentos que lo contengan.\n\n¿Borrar definitivamente?");
+
+    if (check) {
+      $products.splice($products.indexOf(product), 1);
+      $userData._updated = new Date();
+      $products = $products;
+      productsData = [...$products];
+    }
+  }
+
   function pushProduct() {
     if (!$products.some((p) => p.label === productData.label && p.price === productData.price)) {
       productData._id = Date.now().toString();
 
+      $userData._updated = new Date();
       $products = [...$products, productData];
       productsData = [...$products];
       productData = {};
@@ -84,13 +96,15 @@
       {/if}
 
       {#each filteredProducts as product}
-        <li class="box round row xfill">
-          <a href="/productos-servicios/{product._id}" class="row xfill">
-            <div class="col grow">
-              <h4>{product.label}</h4>
-            </div>
+        <li class="box round row acenter xfill nowrap">
+          <a class="row aend grow nowrap">
+            <h4 class="grow nowrap">{product.label}</h4>
             <p>{roundWithTwoDecimals(product.price).toFixed(2)}{$userData.currency}</p>
           </a>
+
+          <div class="icon" on:click={() => deleteProduct(product)}>
+            <img src="/delete.svg" alt="Borrar" />
+          </div>
         </li>
       {/each}
       <div class="fix-bottom row xfill" />
@@ -102,7 +116,7 @@
         <form class="col" on:submit|preventDefault={pushProduct}>
           <div class="col xfill">
             <label for="productLabel">NOMBRE</label>
-            <input class="xfill" id="productLabel" type="text" bind:value={productData.label} placeholder="Ej. Hora de trabajo" />
+            <input class="xfill" id="productLabel" type="text" bind:value={productData.label} placeholder="Ej. Hora de trabajo" autofocus />
           </div>
 
           <div class="col xfill">
@@ -167,58 +181,6 @@
 
   .new-btn {
     margin-bottom: 40px;
-  }
-
-  .outer,
-  .modal {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    transition: 200ms;
-    z-index: 99;
-  }
-
-  .outer {
-    cursor: zoom-out;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(2px);
-  }
-
-  .modal {
-    bottom: 50%;
-    right: 0;
-    transform: translateY(50%);
-    margin: 0 auto;
-    width: 100%;
-    max-width: 400px;
-    background: $white;
-    padding: 40px 30px;
-
-    @media (max-width: $mobile) {
-      bottom: 0;
-      transform: unset;
-    }
-
-    label {
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-
-    input {
-      border-bottom: 1px solid $border;
-      margin-bottom: 30px;
-
-      &:focus {
-        border-color: $pri;
-      }
-    }
-
-    button,
-    a.btn {
-      font-size: 14px;
-      margin: 0 5px;
-    }
   }
 
   .list-filter,
@@ -301,12 +263,83 @@
           }
         }
       }
+
+      .icon {
+        width: 59px;
+        min-width: 59px;
+        height: 59px;
+
+        img {
+          cursor: pointer;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          padding: 18px;
+          transition: 200ms;
+
+          &:hover {
+            transform: scale(1.1);
+          }
+        }
+      }
     }
 
     .fix-bottom {
       height: 40px;
       pointer-events: none;
       user-select: none;
+    }
+  }
+
+  .outer,
+  .modal {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: 200ms;
+    z-index: 9;
+  }
+
+  .outer {
+    cursor: zoom-out;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(2px);
+  }
+
+  .modal {
+    bottom: 50%;
+    right: 0;
+    transform: translateY(50%);
+    margin: 0 auto;
+    width: 100%;
+    max-width: 400px;
+    background: $white;
+    padding: 40px 30px;
+
+    @media (max-width: $mobile) {
+      bottom: 0;
+      transform: unset;
+    }
+
+    label {
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    input {
+      border-bottom: 1px solid $border;
+      margin-bottom: 30px;
+
+      &:focus {
+        border-color: $pri;
+      }
+    }
+
+    button,
+    a.btn {
+      font-size: 14px;
+      margin: 0 5px;
     }
   }
 </style>
