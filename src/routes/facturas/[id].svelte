@@ -1,85 +1,36 @@
 <script>
-  import { fade } from "svelte/transition";
-  import { stores, goto } from "@sapper/app";
-  import { bills, userData, products, budgets } from "../../lib/stores";
-  import { POST, roundWithTwoDecimals, numerationFormat, autoNumeration } from "../../lib/functions";
-  import AutoComplete from "simple-svelte-autocomplete";
+  import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
+  import { bills, userData } from "../../stores";
 
-  const { page } = stores();
   let billData = $bills.filter((bill) => bill._id === $page.params.id)[0];
   let lineData = {};
-  let loading = false;
-  let action = "";
 
   async function downloadBill() {
-    loading = true;
     try {
-      const data = { ...billData };
-      data.user = $userData;
+      const req = await fetch("/print", {
+        method: "POST",
+        "Content-Type": "application/json",
+        body: JSON.stringify(billData),
+      });
 
-      const req = await fetch("/print/bill", POST(data));
       if (!req.ok) throw await req.text();
 
       const res = await req.blob();
-      const blob = URL.createObjectURL(res);
-
-      /* const frame = document.createElement("iframe");
-      frame.src = blob;
-      frame.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 40%;
-        height: 100%;
-      `;
-      document.body.appendChild(frame); */
-
+      const file = window.URL.createObjectURL(res);
       const link = document.createElement("a");
-      link.href = blob;
-      link.download = `Factura_${numerationFormat(data.number, data.date.year)}_${data.client.legal_name}.pdf`;
+
+      link.href = file;
+      link.download = `Factura_${billData.number}_${billData.client.legal_id}.pdf`;
       link.click();
-
-      setTimeout(() => {
-        loading = false;
-      }, 1000);
     } catch (error) {
-      loading = false;
-
       console.log(error);
       alert("Algo ha salido mal. Vuelve a intentarlo");
-      alert(error);
     }
   }
 
-  function generateBudget() {
-    const check = confirm("¿Quieres crear un presupuesto a partir de esta factura?");
-
-    if (!check) return;
-
-    const number = autoNumeration($budgets);
-    const budget = { ...billData };
-    const budgetExists = $budgets.some((b) => b._id === budget._id);
-
-    if (budgetExists) {
-      const check = confirm("Ya se ha creado un presupuesto a partir de esta factura\n\n¿Quieres abrirlo?");
-
-      if (!check) return;
-
-      return goto(`/presupuestos/${budget._id}`);
-    }
-
-    budget.number = number;
-
-    $budgets = [...$budgets, budget];
-    $userData._updated = new Date();
-    action = "";
-
-    goto(`/presupuestos/${budget._id}`);
-  }
-
-  function duplicateBill() {
-    alert("🤝 Proximamente");
-    action = "";
+  function generateDelivery() {
+    console.log("Generating...");
   }
 
   function deleteBill() {
@@ -88,55 +39,15 @@
     if (check) {
       $bills.splice($bills.indexOf(billData), 1);
       $bills = $bills;
-      $userData._updated = new Date();
       goto("/facturas");
     }
-
-    action = "";
-  }
-
-  function evalAction() {
-    if (!action) return;
-    if (action === "budget") generateBudget();
-    if (action === "duplicate") duplicateBill();
-    if (action === "delete") deleteBill();
-  }
-
-  function calcLineTotal(item) {
-    const amount_price = item.price * item.amount;
-    const dto_price = amount_price - (amount_price * item.dto) / 100;
-    return `${roundWithTwoDecimals(dto_price).toFixed(2)}${$userData.currency}`;
   }
 
   function pushLine() {
-    if (lineData.label === undefined) {
-      alert("No hay un concepto definido para añadir la linea");
-      return;
-    }
-    if (lineData.price === undefined) {
-      alert("No hay un precio unitario definido para añadir la linea");
-      return;
-    }
-
-    lineData.amount = lineData.amount || 1;
-    lineData.dto = lineData.dto || 0;
-
-    if (billData.items.some((item) => item.label === lineData.label)) {
-      const check = confirm("Ya has añadido este producto/servicio.\n\n¿Quieres actualizarlo?");
-      if (!check) {
-        lineData = {};
-        return;
-      }
-
-      billData.items = billData.items.map((item) => {
-        if (item._id === lineData._id) return (item = lineData);
-        else return item;
-      });
-    } else {
+    if (Object.keys(lineData).length === 4) {
       billData.items = [...billData.items, lineData];
+      lineData = {};
     }
-
-    lineData = {};
   }
 
   function removeLine(i) {
@@ -149,7 +60,7 @@
       const amount_price = curr.price * curr.amount;
 
       if (curr.dto > 0) {
-        const dto_price = amount_price - (amount_price * curr.dto) / 100;
+        let dto_price = amount_price - (amount_price * curr.dto) / 100;
         return acc + dto_price;
       }
 
@@ -190,8 +101,7 @@
         else return bill;
       });
 
-      $userData._updated = new Date();
-      alert("✔ Datos guardados correctamente");
+      goto("/facturas");
     } else alert("⚠ No has añadido ningun concepto ⚠");
   }
 </script>
@@ -203,12 +113,12 @@
 
   <meta
     name="description"
-    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
   <meta
     property="og:description"
-    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
 </svelte:head>
@@ -216,37 +126,22 @@
 <div class="scroll">
   {#if billData}
     <section class="header col fcenter xfill">
-      <img src="/facturas.svg" alt="Factura" />
-      <h1>Factura {numerationFormat(billData.number, billData.date.year)}</h1>
+      <h1>Factura nº {billData.number}</h1>
       <p>
         Con fecha {billData.date.day}/{billData.date.month}/{billData.date.year}
       </p>
 
       <div class="io-wrapper row jcenter xfill">
-        <button class="succ semi" on:click={downloadBill}>DESCARGAR</button>
-
-        <select class="out semi" bind:value={action} on:change={evalAction}>
-          <option value="">OTRAS ACCIONES</option>
-          <option value="budget">CREAR PRESUPUESTO</option>
-          <option value="duplicate">DUPLICAR</option>
-          <option value="delete">BORRAR</option>
-        </select>
+        <button class="succ semi" on:click={downloadBill}>DESCARGAR FACTURA</button>
+        <button class="link semi" on:click={generateDelivery}>GENERAR ALBARÁN</button>
+        <button class="err semi" on:click={deleteBill}>ELIMINAR FACTURA</button>
       </div>
-
-      <a href="/facturas" class="btn outwhite semi">VOLVER</a>
-
-      {#if loading}
-        <div class="outer-loader col fcenter fill" transition:fade={{ duration: 100 }}>
-          <img src="/loader.svg" alt="Generando PDF" />
-          <h3>Genarando PDF</h3>
-        </div>
-      {/if}
     </section>
 
     <form class="bill-data col acenter xfill" on:submit|preventDefault={pushBill}>
       <div class="box round col xfill">
         <h2>Datos de la factura</h2>
-        <p class="notice">Recuerda que cambiar la numeracion manualmente provocara que no sea correlativa.</p>
+        <p class="notice">La numeración y fecha de la factura se rellenan automatiamente, pero puedes modificarlas.</p>
 
         <div class="row xfill">
           <div class="input-wrapper col grow">
@@ -273,7 +168,7 @@
 
       <div class="box round col xfill">
         <h2>Datos del cliente</h2>
-        <p class="notice">Los cambios que realices aqui, no se guardaran en la ficha del cliente</p>
+        <p class="notice">Cada vez que añadas un cliente nuevo, este se guardara automatiamente.</p>
 
         <div class="input-wrapper col xfill">
           <label for="legal_name">NOMBRE FISCAL</label>
@@ -319,99 +214,63 @@
 
       <div class="box round col xfill">
         <h2>Conceptos</h2>
-        <p class="notice">Los cambios que realices aqui, no se guardaran en la ficha del producto/servicio</p>
+        <p class="notice">Cada vez que añadas un producto/servicio nuevo, este se guardara automatiamente.</p>
 
         {#if billData.items.length > 0}
           <ul class="bill-items col acenter xfill">
-            <li class="line row xfill">
-              <span class="label row">CANT</span>
-              <span class="label row grow">CONCEPTO</span>
-              <span class="label row">DTO %</span>
-              <span class="label row">PRECIO {$userData.currency}</span>
-              <span class="label row">IMPORTE {$userData.currency}</span>
-              <span class="label row">&nbsp;</span>
-            </li>
-
             {#each billData.items as item, i}
               <li class="line row xfill">
-                <input type="number" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
-                <input type="text" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
-                <input type="number" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
-                <input type="number" bind:value={item.price} step="0.01" class="out" placeholder="PRECIO {$userData.currency}" />
-                <input type="text" value={calcLineTotal(item)} class="out" disabled />
-                <input type="text" value="🗑" class="out" on:click={() => removeLine(i)} />
+                <input type="number" id="amount" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
+                <input type="text" id="label" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
+                <input type="number" id="dto" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
+                <input type="number" id="price" bind:value={item.price} step="0.01" class="out" placeholder="UNIDAD €" />
+                <input type="text" value="x" class="out" on:click={() => removeLine(i)} />
               </li>
             {/each}
           </ul>
 
           <h-div />
 
-          <ul class="total-wrapper row jevenly xfill">
+          <ul class="total-wrapper row jaround xfill">
             <li class="col acenter">
-              <p class="label">Base</p>
-              <h3>{roundWithTwoDecimals(base_total()).toFixed(2)}{$userData.currency}</h3>
+              <p class="label">Base imponible</p>
+              <h3>{base_total().toFixed(2)}€</h3>
             </li>
 
             <li class="col acenter">
               <p class="label">IVA {$userData.iva}%</p>
-              <h3>{roundWithTwoDecimals(iva_total()).toFixed(2)}{$userData.currency}</h3>
+              <h3>{iva_total().toFixed(2)}€</h3>
             </li>
 
             {#if $userData.ret}
               <li class="col acenter">
                 <p class="label">IRPF {$userData.ret}%</p>
-                <h3>-{roundWithTwoDecimals(ret_total()).toFixed(2)}{$userData.currency}</h3>
+                <h3>-{ret_total().toFixed(2)}€</h3>
               </li>
             {/if}
 
-            <h-div />
-
-            <li class="col acenter grow">
+            <li class="col acenter">
               <p class="label">Total</p>
-              <h3>{roundWithTwoDecimals(bill_total()).toFixed(2)}{$userData.currency}</h3>
+              <h3>{bill_total().toFixed(2)}€</h3>
             </li>
           </ul>
 
           <h-div />
         {/if}
 
-        {#if $products.length > 0}
-          <div class="input-wrapper col xfill">
-            <label for="products_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-            <AutoComplete items={$products} bind:selectedItem={lineData} labelFieldName="label" placeholder="Buscar producto" noResultsText="No hay coincidencias" hideArrow>
-              <div slot="item" let:item>
-                <div class="row aend xfill">
-                  <p class="nowrap grow" style="padding-right: 10px;">{item.label}</p>
-                  <small><b>{roundWithTwoDecimals(item.price).toFixed(2)}€</b></small>
-                </div>
-              </div>
-            </AutoComplete>
-          </div>
-        {/if}
-
         <div class="new-line row xfill">
           <input type="number" id="amount" bind:value={lineData.amount} min="1" class="out" placeholder="CANT" />
           <input type="text" id="label" bind:value={lineData.label} class="out grow" placeholder="CONCEPTO" />
           <input type="number" id="dto" bind:value={lineData.dto} min="0" max="100" class="out" placeholder="DTO %" />
-          <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="PRECIO {$userData.currency}" />
+          <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="UNIDAD €" />
         </div>
 
-        <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR A LA LISTA</div>
+        <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR PRODUCTO/SERVICIO</div>
       </div>
 
-      <div class="box round col xfill">
-        <h2>Notas</h2>
-        <p class="notice">Si tienes que añadir o modificar la nota, este es el lugar.</p>
-
-        <div class="input-wrapper col xfill">
-          <label for="note">Notas</label>
-          <textarea id="note" bind:value={billData.note} class="xfill" placeholder="Ej. Transporte no incluido" />
-        </div>
-      </div>
-
-      <div class="last-row row jcenter xfill">
+      <div class="row jcenter xfill">
         <button class="succ semi">GUARDAR CAMBIOS</button>
-        <a href="/facturas" class="btn out semi">ATRAS</a>
+        <a href="/facturas" class="btn out semi">CANCELAR</a>
       </div>
     </form>
   {/if}
@@ -425,17 +284,12 @@
     padding: 60px;
 
     @media (max-width: $mobile) {
-      padding: 40px 20px;
-    }
-
-    img {
-      width: 100px;
-      margin-bottom: 20px;
+      padding: 40px;
     }
 
     h1 {
       max-width: 900px;
-      font-size: 4vh;
+      font-size: 6vh;
       line-height: 1;
       margin-bottom: 10px;
     }
@@ -453,31 +307,6 @@
 
     .io-wrapper {
       font-size: 12px;
-      margin-bottom: 20px;
-
-      select {
-        background: $white;
-        text-align-last: center;
-        border-width: 2px;
-      }
-    }
-
-    a.btn {
-      font-size: 12px;
-    }
-
-    .outer-loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: rgba($black, 0.7);
-      backdrop-filter: blur(10px);
-      pointer-events: none;
-
-      img {
-        width: 100px;
-        margin-bottom: 20px;
-      }
     }
   }
 
@@ -524,7 +353,7 @@
     }
 
     input,
-    textarea {
+    select {
       font-size: 16px;
       border-bottom: 1px solid $sec;
       border-radius: 0;
@@ -538,11 +367,6 @@
       }
     }
 
-    textarea {
-      border: 1px solid $border;
-      resize: none;
-    }
-
     .date {
       width: calc(100% / 3);
     }
@@ -554,43 +378,15 @@
     }
 
     .line {
-      @media (max-width: $mobile) {
-        margin-bottom: 10px;
-      }
-
       &:nth-of-type(even) {
-        background: $bg;
-      }
-
-      span.label {
-        font-size: 12px;
-        padding-left: 15px;
-        margin-bottom: 5px;
-
-        @media (max-width: $mobile) {
-          display: none;
-        }
-      }
-
-      span.label:nth-of-type(1),
-      span.label:nth-of-type(3),
-      span.label:nth-of-type(4),
-      span.label:nth-of-type(5) {
-        width: 15%;
-
-        @media (max-width: $mobile) {
-          width: 25%;
-        }
-      }
-
-      span:nth-of-type(6) {
-        width: 55px;
+        background: lighten($border, 5%);
+        border-top: 5px solid $white;
+        border-bottom: 5px solid $white;
       }
 
       input:nth-of-type(1),
       input:nth-of-type(3),
-      input:nth-of-type(4),
-      input:nth-of-type(5) {
+      input:nth-of-type(4) {
         width: 15%;
 
         @media (max-width: $mobile) {
@@ -598,30 +394,31 @@
         }
       }
 
-      input:nth-of-type(6) {
+      input:nth-of-type(5) {
         cursor: pointer;
-        width: 55px;
-        background: $border;
+        width: 50px;
+        background: $sec;
         text-align: center;
+        color: $pri;
         font-weight: bold;
-        color: $base;
-        border: 1px solid $border;
-        user-select: none;
-        -webkit-user-drag: none;
+
+        &:hover {
+          background: $pri;
+          color: $sec;
+        }
       }
 
       input:nth-of-type(3),
       input:nth-of-type(4),
-      input:nth-of-type(5),
-      input:nth-of-type(6) {
+      input:nth-of-type(5) {
         @media (max-width: $mobile) {
-          width: 25%;
+          width: calc(100% / 3);
         }
       }
     }
 
     h-div {
-      margin: 20px 0;
+      margin: 40px 0;
     }
 
     .new-line {
@@ -645,11 +442,16 @@
 
     .line-btn {
       cursor: pointer;
-      background: $pri;
-      color: $white;
+      background: $sec;
       text-align: center;
       font-size: 12px;
       padding: 1.3em;
+      transition: 200ms;
+
+      &:hover {
+        background: $pri;
+        color: $white;
+      }
     }
   }
 
@@ -659,19 +461,22 @@
     }
   }
 
-  .last-row {
-    margin-top: 20px;
-  }
-
-  button,
-  a.btn,
-  select {
-    margin: 5px;
+  button {
+    margin-right: 10px;
 
     @media (max-width: $mobile) {
       width: 70%;
-      max-width: 210px;
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  }
+
+  a.btn {
+    @media (max-width: $mobile) {
+      width: 70%;
       text-align: center;
+      margin-right: 0;
+      margin-bottom: 10px;
     }
   }
 </style>

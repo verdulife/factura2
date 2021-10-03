@@ -1,8 +1,7 @@
 .DS_Store
-.env
-/node_modules/
-/src/node_modules/@sapper/
-yarn-error.log
-/__sapper__/
-
-.vercel
+node_modules
+/build
+/.svelte-kit
+/.vercel_build_output
+/.netlify
+/package

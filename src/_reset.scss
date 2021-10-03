@@ -24,11 +24,7 @@
   }
 
   @media (max-width: $tablet) {
-    cursor: default !important;
-
-    &:hover {
-      all: unset !important;
-    }
+    cursor: default;
   }
 }
 
@@ -69,10 +65,6 @@ select,
 option,
 p {
   font-weight: lighter;
-}
-
-input.out {
-  border-radius: 0;
 }
 
 //hyperlinks

@@ -1,7 +1,6 @@
 <script>
-  import { userData, bills } from "../../lib/stores";
-  import { tools, months } from "../../lib/utils";
-  import { sortByNumber, roundWithTwoDecimals, numerationFormat } from "../../lib/functions";
+  import { userData, bills } from "../../stores";
+  import { tools, months } from "../../ui/utils";
 
   let billsData = [...$bills];
   let searchTerm = "";
@@ -24,7 +23,16 @@
     return false;
   });
 
-  billsData.sort(sortByNumber);
+  function sortByNumber(a, b) {
+    if (a.number < b.number) {
+      return -1;
+    }
+    if (a.number > b.number) {
+      return 1;
+    }
+    return 0;
+  }
+  $bills.sort(sortByNumber);
 
   const years = () => {
     let yearsList = [];
@@ -35,34 +43,34 @@
 
     return yearsList;
   };
-
+  filterYear = Math.max(years());
+  
   function clearFilters() {
     searchTerm = "";
     filterMonth = "";
-    filterYear = Math.max(...years());
+    filterYear = Math.max(years());
   }
 </script>
 
 <svelte:head>
-  <title>Facturas | Facturas gratis</title>
-  <meta property="og:title" content="Facturas | Facturas gratis" />
+  <title>Tus facturas | Facturas gratis</title>
+  <meta property="og:title" content="Tus facturas | Facturas gratis" />
   <meta property="og:site_name" content="Facturas gratis" />
 
   <meta
     name="description"
-    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
   <meta
     property="og:description"
-    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
 </svelte:head>
 
 <div class="scroll">
   <section class="header col fcenter xfill">
-    <img src="/facturas.svg" alt="Facturas" />
     <h1>{tools[0].title}</h1>
     <p>{tools[0].desc}</p>
   </section>
@@ -91,13 +99,13 @@
             {/each}
           </select>
 
-          <div class="clear-btn row fcenter" on:click={clearFilters}>🗑</div>
+          <div class="clear-btn row acenter" on:click={clearFilters}>LIMPIAR FILTROS</div>
         </div>
       {/if}
     </div>
 
     <ul class="bill-list col acenter xfill">
-      {#if filteredBills.length <= 0 && billsData.length > 0}
+      {#if filteredBills.length <= 0}
         <p>No hay coincidencias</p>
       {/if}
 
@@ -110,13 +118,14 @@
                 <p>{bill.client.legal_id}</p>
               </div>
 
-              <h3>{roundWithTwoDecimals(bill.totals.total).toFixed(2)}{$userData.currency}</h3>
+              <h3>{bill.totals.total.toFixed(2)}€</h3>
             </div>
 
-            <div class="info row xfill">
+            <div class="info row jbetween xfill">
               <p>
-                <b>{numerationFormat(bill.number, bill.date.year)}</b> | Fecha: <b>{bill.date.day}/{bill.date.month}/{bill.date.year}</b>
+                Nº de factura: <b>{bill.number}</b> | Fecha: <b>{bill.date.day}/{bill.date.month}/{bill.date.year}</b>
               </p>
+              <p><b>{bill.items.length}</b> conceptos</p>
             </div>
           </a>
         </li>
@@ -144,14 +153,9 @@
       padding: 40px;
     }
 
-    img {
-      width: 100px;
-      margin-bottom: 20px;
-    }
-
     h1 {
       max-width: 900px;
-      font-size: 5vh;
+      font-size: 6vh;
       line-height: 1;
       margin-bottom: 20px;
 
@@ -191,44 +195,27 @@
     .filter-wrapper {
       align-items: stretch;
 
-      input,
-      select {
-        background: $white;
-      }
-
       select {
         @media (max-width: $mobile) {
           width: 50%;
         }
       }
+    }
 
-      .clear-btn {
-        cursor: pointer;
-        width: 48px;
-        background: $border;
-        text-align: center;
-        font-size: 12px;
-        font-weight: bold;
-        color: $base;
-        border: 1px solid $border;
-        user-select: none;
-        -webkit-user-drag: none;
-      }
-
-      @media (max-width: $mobile) {
-        input {
-          width: 100%;
-        }
-
-        select {
-          width: calc(50% - 24px);
-        }
-      }
+    .clear-btn {
+      cursor: pointer;
+      background: $border;
+      font-size: 12px;
+      font-weight: bold;
+      color: $base;
+      border: 1px solid $border;
+      padding: 1em 2em;
+      user-select: none;
+      -webkit-user-drag: none;
     }
   }
 
   .first {
-    text-align: center;
     padding: 40px;
 
     a.btn.pri {
@@ -243,11 +230,11 @@
       transition: 200ms;
 
       &:nth-of-type(even) {
-        background: $bg;
+        background: lighten($border, 5%);
       }
 
       &:hover {
-        background: lighten($border, 10%);
+        background: $border;
       }
 
       a {

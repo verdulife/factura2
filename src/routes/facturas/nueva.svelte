@@ -1,58 +1,28 @@
 <script>
-  import { stores, goto } from "@sapper/app";
-  import { userData, bills, clients, products } from "../../lib/stores";
-  import { autoNumeration, roundWithTwoDecimals } from "../../lib/functions";
-  import AutoComplete from "simple-svelte-autocomplete";
+  import { goto } from "$app/navigation";
+  import { bills, userData } from "../../stores";
 
-  const { page } = stores();
   let billData = {};
   let lineData = {};
 
-  billData.number = autoNumeration($bills);
+  function autoBillNumber() {
+    return $bills.length + 1 || 1;
+  }
+
+  billData.number = autoBillNumber();
   billData.date = {
     day: new Date().getDate(),
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
   };
-  billData.client = $page.query.client ? JSON.parse($page.query.client) : {};
+  billData.client = {};
   billData.items = [];
-  billData.note = billData.note || $userData.bill_note;
-
-  function calcLineTotal(item) {
-    const amount_price = item.price * item.amount;
-    const dto_price = amount_price - (amount_price * item.dto) / 100;
-    return `${roundWithTwoDecimals(dto_price).toFixed(2)}${$userData.currency}`;
-  }
 
   function pushLine() {
-    if (lineData.label === undefined) {
-      alert("No hay un concepto definido para añadir la linea");
-      return;
-    }
-    if (lineData.price === undefined) {
-      alert("No hay un precio unitario definido para añadir la linea");
-      return;
-    }
-
-    lineData.amount = lineData.amount || 1;
-    lineData.dto = lineData.dto || 0;
-
-    if (billData.items.some((item) => item.label === lineData.label)) {
-      const check = confirm("Ya has añadido este producto/servicio.\n\n¿Quieres actualizarlo?");
-      if (!check) {
-        lineData = {};
-        return;
-      }
-
-      billData.items = billData.items.map((item) => {
-        if (item._id === lineData._id) return (item = lineData);
-        else return item;
-      });
-    } else {
+    if (Object.keys(lineData).length === 4) {
       billData.items = [...billData.items, lineData];
+      lineData = {};
     }
-
-    lineData = {};
   }
 
   function removeLine(i) {
@@ -65,7 +35,7 @@
       const amount_price = curr.price * curr.amount;
 
       if (curr.dto > 0) {
-        const dto_price = amount_price - (amount_price * curr.dto) / 100;
+        let dto_price = amount_price - (amount_price * curr.dto) / 100;
         return acc + dto_price;
       }
 
@@ -92,27 +62,6 @@
     return result;
   };
 
-  function pushClient(client) {
-    if (!$clients.some((c) => c.legal_id === client.legal_id)) {
-      client._id = Date.now().toString();
-      $clients = [...$clients, client];
-    }
-  }
-
-  function pushProduct(items) {
-    for (let i = 0; i < items.length; i++) {
-      let product = { ...items[i] };
-
-      if (!$products.some((p) => p._id === product._id)) {
-        delete product.amount;
-        delete product.dto;
-        product._id = Date.now().toString();
-
-        $products = [...$products, product];
-      }
-    }
-  }
-
   function pushBill() {
     if (billData.items.length > 0) {
       billData._id = Date.now().toString();
@@ -124,38 +73,31 @@
       };
 
       $bills = [...$bills, billData];
-
-      pushClient(billData.client);
-      pushProduct(billData.items);
-
-      $userData._updated = new Date();
       goto("/facturas");
     } else alert("⚠ No has añadido ningun concepto ⚠");
   }
 </script>
 
 <svelte:head>
-  <title>Nueva factura | Facturas gratis</title>
-  <meta property="og:title" content="Nueva factura | Facturas gratis" />
+  <title>Crear nueva factura | Facturas gratis</title>
+  <meta property="og:title" content="Crear nueva factura | Facturas gratis" />
   <meta property="og:site_name" content="Facturas gratis" />
 
   <meta
     name="description"
-    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
   <meta
     property="og:description"
-    content="Herramientas online gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
+    content="Herramientas online y completamente gratuitas para generar, enviar, rectificar y listar facturas, presupuestos, albaranes,
   clientes, proveedores y productos/servicios."
   />
 </svelte:head>
 
 <div class="scroll">
   <section class="header col fcenter xfill">
-    <img src="/facturas.svg" alt="Facturas" />
     <h1>Nueva factura</h1>
-    <a href="/facturas" class="btn outwhite semi">VOLVER</a>
   </section>
 
   <form class="bill-data col acenter xfill" on:submit|preventDefault={pushBill}>
@@ -189,13 +131,6 @@
     <div class="box round col xfill">
       <h2>Datos del cliente</h2>
       <p class="notice">Cada vez que añadas un cliente nuevo, este se guardara automatiamente.</p>
-
-      {#if $clients.length > 0}
-        <div class="input-wrapper col xfill">
-          <label for="clients_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-          <AutoComplete items={$clients} bind:selectedItem={billData.client} labelFieldName="legal_name" placeholder="Buscar cliente" noResultsText="No hay coincidencias" hideArrow />
-        </div>
-      {/if}
 
       <div class="input-wrapper col xfill">
         <label for="legal_name">NOMBRE FISCAL</label>
@@ -245,93 +180,57 @@
 
       {#if billData.items.length > 0}
         <ul class="bill-items col acenter xfill">
-          <li class="line row xfill">
-            <span class="label row">CANT</span>
-            <span class="label row grow">CONCEPTO</span>
-            <span class="label row">DTO %</span>
-            <span class="label row">PRECIO {$userData.currency}</span>
-            <span class="label row">IMPORTE {$userData.currency}</span>
-            <span class="label row">&nbsp;</span>
-          </li>
-
           {#each billData.items as item, i}
             <li class="line row xfill">
-              <input type="number" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
-              <input type="text" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
-              <input type="number" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
-              <input type="number" bind:value={item.price} step="0.01" class="out" placeholder="PRECIO {$userData.currency}" />
-              <input type="text" value={calcLineTotal(item)} class="out" disabled />
-              <input type="text" value="🗑" class="out" on:click={() => removeLine(i)} />
+              <input type="number" id="amount" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
+              <input type="text" id="label" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
+              <input type="number" id="dto" bind:value={item.dto} min="0" max="100" class="out" placeholder="DTO %" />
+              <input type="number" id="price" bind:value={item.price} step="0.01" class="out" placeholder="UNIDAD €" />
+              <input type="text" value="x" class="out" on:click={() => removeLine(i)} />
             </li>
           {/each}
         </ul>
 
         <h-div />
 
-        <ul class="total-wrapper row jevenly xfill">
+        <ul class="total-wrapper row jaround xfill">
           <li class="col acenter">
-            <p class="label">Base</p>
-            <h3>{roundWithTwoDecimals(base_total()).toFixed(2)}{$userData.currency}</h3>
+            <p class="label">Base imponible</p>
+            <h3>{base_total().toFixed(2)}€</h3>
           </li>
 
           <li class="col acenter">
             <p class="label">IVA {$userData.iva}%</p>
-            <h3>{roundWithTwoDecimals(iva_total()).toFixed(2)}{$userData.currency}</h3>
+            <h3>{iva_total().toFixed(2)}€</h3>
           </li>
 
           {#if $userData.ret}
             <li class="col acenter">
               <p class="label">IRPF {$userData.ret}%</p>
-              <h3>-{roundWithTwoDecimals(ret_total()).toFixed(2)}{$userData.currency}</h3>
+              <h3>-{ret_total().toFixed(2)}€</h3>
             </li>
           {/if}
 
-          <h-div />
-
-          <li class="col acenter grow">
+          <li class="col acenter">
             <p class="label">Total</p>
-            <h3>{roundWithTwoDecimals(bill_total()).toFixed(2)}{$userData.currency}</h3>
+            <h3>{bill_total().toFixed(2)}€</h3>
           </li>
         </ul>
 
         <h-div />
       {/if}
 
-      {#if $products.length > 0}
-        <div class="input-wrapper col xfill">
-          <label for="products_list" style="margin-bottom: 10px">CARGAR DATOS</label>
-          <AutoComplete items={$products} bind:selectedItem={lineData} labelFieldName="label" placeholder="Buscar producto" noResultsText="😢 No hay coincidencias" hideArrow>
-            <div slot="item" let:item>
-              <div class="row aend xfill">
-                <p class="nowrap grow" style="padding-right: 10px;">{item.label}</p>
-                <small><b>{roundWithTwoDecimals(item.price).toFixed(2)}€</b></small>
-              </div>
-            </div>
-          </AutoComplete>
-        </div>
-      {/if}
-
       <div class="new-line row xfill">
         <input type="number" id="amount" bind:value={lineData.amount} min="1" class="out" placeholder="CANT" />
         <input type="text" id="label" bind:value={lineData.label} class="out grow" placeholder="CONCEPTO" />
         <input type="number" id="dto" bind:value={lineData.dto} min="0" max="100" class="out" placeholder="DTO %" />
-        <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="PRECIO {$userData.currency}" />
+        <input type="number" id="price" bind:value={lineData.price} step="0.01" class="out" placeholder="UNIDAD €" />
       </div>
 
-      <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR A LA LISTA</div>
+      <div class="line-btn pri xfill" on:click={pushLine}>AÑADIR PRODUCTO/SERVICIO</div>
     </div>
 
-    <div class="box round col xfill">
-      <h2>Notas</h2>
-      <p class="notice">Si tienes que añadir o modificar la nota, este es el lugar.</p>
-
-      <div class="input-wrapper col xfill">
-        <label for="note">Notas</label>
-        <textarea id="note" bind:value={billData.note} class="xfill" placeholder="Ej. Transporte no incluido" />
-      </div>
-    </div>
-
-    <div class="last-row row jcenter xfill">
+    <div class="row jcenter xfill">
       <button class="succ semi">GENERAR FACTURA</button>
       <a href="/facturas" class="btn out semi">CANCELAR</a>
     </div>
@@ -349,24 +248,14 @@
       padding: 40px;
     }
 
-    img {
-      width: 100px;
-      margin-bottom: 20px;
-    }
-
     h1 {
       max-width: 900px;
-      font-size: 5vh;
+      font-size: 6vh;
       line-height: 1;
-      margin-bottom: 20px;
 
       @media (max-width: $mobile) {
         margin-bottom: 20px;
       }
-    }
-
-    a.btn {
-      font-size: 12px;
     }
   }
 
@@ -413,7 +302,7 @@
     }
 
     input,
-    textarea {
+    select {
       font-size: 16px;
       border-bottom: 1px solid $sec;
       border-radius: 0;
@@ -427,11 +316,6 @@
       }
     }
 
-    textarea {
-      border: 1px solid $border;
-      resize: none;
-    }
-
     .date {
       width: calc(100% / 3);
     }
@@ -443,44 +327,15 @@
     }
 
     .line {
-      @media (max-width: $mobile) {
-        margin-bottom: 10px;
-      }
-
       &:nth-of-type(even) {
-        background: $bg;
-        margin-top: -1px;
-      }
-
-      span.label {
-        font-size: 12px;
-        padding-left: 15px;
-        margin-bottom: 5px;
-
-        @media (max-width: $mobile) {
-          display: none;
-        }
-      }
-
-      span.label:nth-of-type(1),
-      span.label:nth-of-type(3),
-      span.label:nth-of-type(4),
-      span.label:nth-of-type(5) {
-        width: 15%;
-
-        @media (max-width: $mobile) {
-          width: 25%;
-        }
-      }
-
-      span:nth-of-type(6) {
-        width: 55px;
+        background: lighten($border, 5%);
+        border-top: 5px solid $white;
+        border-bottom: 5px solid $white;
       }
 
       input:nth-of-type(1),
       input:nth-of-type(3),
-      input:nth-of-type(4),
-      input:nth-of-type(5) {
+      input:nth-of-type(4) {
         width: 15%;
 
         @media (max-width: $mobile) {
@@ -488,30 +343,31 @@
         }
       }
 
-      input:nth-of-type(6) {
+      input:nth-of-type(5) {
         cursor: pointer;
-        width: 55px;
-        background: $border;
+        width: 50px;
+        background: $sec;
         text-align: center;
+        color: $pri;
         font-weight: bold;
-        color: $base;
-        border: 1px solid $border;
-        user-select: none;
-        -webkit-user-drag: none;
+
+        &:hover {
+          background: $pri;
+          color: $sec;
+        }
       }
 
       input:nth-of-type(3),
       input:nth-of-type(4),
-      input:nth-of-type(5),
-      input:nth-of-type(6) {
+      input:nth-of-type(5) {
         @media (max-width: $mobile) {
-          width: 25%;
+          width: calc(100% / 3);
         }
       }
     }
 
     h-div {
-      margin: 20px 0;
+      margin: 40px 0;
     }
 
     .new-line {
@@ -535,11 +391,16 @@
 
     .line-btn {
       cursor: pointer;
-      background: $pri;
-      color: $white;
+      background: $sec;
       text-align: center;
       font-size: 12px;
       padding: 1.3em;
+      transition: 200ms;
+
+      &:hover {
+        background: $pri;
+        color: $white;
+      }
     }
   }
 
@@ -549,18 +410,22 @@
     }
   }
 
-  .last-row {
-    margin-top: 10px;
-  }
-
-  button,
-  a.btn {
-    margin: 5px;
+  button {
+    margin-right: 10px;
 
     @media (max-width: $mobile) {
       width: 70%;
-      max-width: 210px;
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  }
+
+  a.btn {
+    @media (max-width: $mobile) {
+      width: 70%;
       text-align: center;
+      margin-right: 0;
+      margin-bottom: 10px;
     }
   }
 </style>

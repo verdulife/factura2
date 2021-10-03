@@ -1,11 +1,8 @@
 <script>
+  import { page } from "$app/stores";
   import { slide } from "svelte/transition";
-  import { l, userData } from "../lib/stores";
-  import { tools } from "../lib/utils";
-  import { content } from "./Nav.content";
-
-  export let segment;
-  const ui = content[$l];
+  import { userData } from "../stores";
+  import { tools } from "../ui/utils";
 
   let mobileMenu = false;
 
@@ -25,7 +22,7 @@
 
       <ul class="expand-menu col">
         {#each tools as { slug, title, icon }}
-          <li class="xfill" class:active={segment === slug}>
+          <li class="xfill" class:active={$page.path === slug}>
             <a href={slug} class="row nowrap acenter fill">
               <img src={icon} alt={title} />
               <p>{title}</p>
@@ -38,13 +35,9 @@
     <li class="row acenter yfill">
       <a href="/ajustes" class="row acenter yfill">
         {#if $userData.logo}
-          <img
-            class="user-img"
-            src={$userData.logo}
-            alt={$userData.legal_name || "Logotipo"}
-          />
+          <img class="user-img" src={$userData.logo} alt={$userData.legal_name || "Logotipo"} />
         {/if}
-        {$userData.legal_name || "Tus datos"}
+        {$userData.legal_name || "Ajustes"}
       </a>
     </li>
   </ul>
@@ -60,7 +53,7 @@
         </li>
 
         {#each tools as { slug, title, icon }}
-          <li class="xfill" class:active={segment === slug} on:click={togMenu}>
+          <li class="xfill" class:active={$page.path === slug} on:click={togMenu}>
             <a href={slug} class="row nowrap acenter fill">
               <img src={icon} alt={title} />
               <p>{title}</p>
@@ -71,11 +64,7 @@
         <li class="row acenter xfill" on:click={togMenu}>
           <a href="/ajustes" class="row acenter yfill">
             {#if $userData.logo}
-              <img
-                class="user-img"
-                src={$userData.logo}
-                alt={$userData.legal_name || "Logotipo"}
-              />
+              <img class="user-img" src={$userData.logo} alt={$userData.legal_name || "Logotipo"} />
             {/if}
             {$userData.legal_name || "Ajustes"}
           </a>
@@ -126,7 +115,7 @@
         transition: 200ms;
 
         &:hover {
-          background: lighten($border, 10%);
+          background: $border;
         }
 
         &:last-of-type {
@@ -136,14 +125,14 @@
         img {
           width: 20px;
           height: 20px;
-          object-fit: cover;
+          object-fit: contain;
           margin-right: 10px;
         }
       }
     }
 
     &:hover {
-      background: lighten($border, 10%);
+      background: $border;
 
       .expand-menu {
         opacity: 1;
