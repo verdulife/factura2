@@ -102,9 +102,7 @@
             <p>{roundWithTwoDecimals(product.price).toFixed(2)}{$userData.currency}</p>
           </div>
 
-          <div class="icon" on:click={() => deleteProduct(product)}>
-            <img src="/delete.svg" alt="Borrar" />
-          </div>
+          <div class="icon row fcenter" on:click={() => deleteProduct(product)}>🗑</div>
         </li>
       {/each}
       <div class="fix-bottom row xfill" />
@@ -116,12 +114,12 @@
         <form class="col" on:submit|preventDefault={pushProduct}>
           <div class="col xfill">
             <label for="productLabel">NOMBRE</label>
-            <input class="xfill" id="productLabel" type="text" bind:value={productData.label} placeholder="Ej. Hora de trabajo" />
+            <input class="xfill" id="productLabel" type="text" bind:value={productData.label} placeholder="Ej. Hora de trabajo" required />
           </div>
 
           <div class="col xfill">
             <label for="productPrice">PRECIO € (sin impuestos)</label>
-            <input class="xfill" type="number" step="0.01" bind:value={productData.price} placeholder="Ej. 25€" />
+            <input class="xfill" type="number" step="0.01" bind:value={productData.price} placeholder="Ej. 25€" required />
           </div>
 
           <div class="row fcenter xfill">
@@ -252,22 +250,10 @@
       }
 
       .icon {
+        cursor: pointer;
         width: 59px;
         min-width: 59px;
         height: 59px;
-
-        img {
-          cursor: pointer;
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          padding: 18px;
-          transition: 200ms;
-
-          &:hover {
-            transform: scale(1.1);
-          }
-        }
       }
     }
 
