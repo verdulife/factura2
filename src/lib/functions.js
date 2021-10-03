@@ -72,6 +72,19 @@ export function numerationFormat(num, year) {
   return `${prefix}-${num}`;
 }
 
+export function autoNumeration(arr) {
+  if (arr.length <= 0) return 1;
+
+  const currYear = new Date().getFullYear();
+  let currYearsArr = [];
+
+  for (let a = 0; a < arr.length; ++a) {
+    if (arr[a].date.year === currYear) currYearsArr = [...currYearsArr, arr[a]];
+  }
+
+  return currYearsArr.length <= 0 ? 1 : Math.max(...currYearsArr.map((n) => n.number)) + 1;
+}
+
 export let storageSpace = {
   usage: 0,
 };

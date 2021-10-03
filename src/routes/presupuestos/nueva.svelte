@@ -1,27 +1,14 @@
 <script>
   import { stores, goto } from "@sapper/app";
   import { userData, budgets, clients, products } from "../../lib/stores";
-  import { roundWithTwoDecimals } from "../../lib/functions";
+  import { autoNumeration, roundWithTwoDecimals } from "../../lib/functions";
   import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
   let budgetData = {};
   let lineData = {};
 
-  function autoBudgetNumber() {
-    if ($budgets.length <= 0) return 1;
-
-    const currYear = new Date().getFullYear();
-    let currYearsBudgets = [];
-
-    for (let b = 0; b < $budgets.length; ++b) {
-      if ($budgets[b].date.year === currYear) currYearsBudgets = [...currYearsBudgets, $budgets[b]];
-    }
-
-    return currYearsBudgets.length <= 0 ? 1 : Math.max(...currYearsBudgets.map((n) => n.number)) + 1;
-  }
-
-  budgetData.number = autoBudgetNumber();
+  budgetData.number = autoNumeration($budgets);
   budgetData.date = {
     day: new Date().getDate(),
     month: new Date().getMonth() + 1,

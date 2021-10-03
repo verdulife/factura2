@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
   import { budgets, userData, bills, products } from "../../lib/stores";
-  import { POST, roundWithTwoDecimals, numerationFormat } from "../../lib/functions";
+  import { POST, roundWithTwoDecimals, numerationFormat, autoNumeration } from "../../lib/functions";
   import AutoComplete from "simple-svelte-autocomplete";
 
   const { page } = stores();
@@ -56,12 +56,12 @@
 
     if (!check) return;
 
-    const number = $bills.length + 1;
+    const number = autoNumeration($bills);
     const bill = { ...budgetData };
     const billExists = $bills.some((b) => b._id === bill._id);
 
     if (billExists) {
-      const check = confirm("Ya se ha creado factura a partir de este presupuesto\n\n¿Quieres abrirla?");
+      const check = confirm("Ya se ha creado una factura a partir de este presupuesto\n\n¿Quieres abrirla?");
 
       if (!check) return;
 
@@ -74,7 +74,7 @@
     $userData._updated = new Date();
     action = "";
 
-    goto("/facturas");
+    goto(`/facturas/${bill._id}`);
   }
 
   function duplicateBudget() {
