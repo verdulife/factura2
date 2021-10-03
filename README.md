@@ -2,7 +2,7 @@
 
 ### TODOS para 🚀:
 
-- [ ] facturas && pptos /id: rediseñar cta box
+- [ ] change between repos
 - [ ] SEO
 
 ### TODOS 🐌:

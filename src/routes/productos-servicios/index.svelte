@@ -97,10 +97,10 @@
 
       {#each filteredProducts as product}
         <li class="box round row acenter xfill nowrap">
-          <a class="row aend grow nowrap">
+          <div class="row aend grow nowrap">
             <h4 class="grow nowrap">{product.label}</h4>
             <p>{roundWithTwoDecimals(product.price).toFixed(2)}{$userData.currency}</p>
-          </a>
+          </div>
 
           <div class="icon" on:click={() => deleteProduct(product)}>
             <img src="/delete.svg" alt="Borrar" />
@@ -126,7 +126,7 @@
 
           <div class="row fcenter xfill">
             <button class="succ semi">CREAR</button>
-            <a class="btn out semi" on:click={togModal}>CANCELAR</a>
+            <button class="out semi" on:click={togModal}>CANCELAR</button>
           </div>
         </form>
       </div>
@@ -247,21 +247,8 @@
         background: lighten($border, 10%);
       }
 
-      a {
+      .row {
         padding: 1em;
-
-        .title {
-          margin-bottom: 20px;
-        }
-
-        .info {
-          border-top: 1px solid $border;
-          padding-top: 10px;
-
-          a {
-            padding: 0;
-          }
-        }
       }
 
       .icon {
@@ -336,8 +323,7 @@
       }
     }
 
-    button,
-    a.btn {
+    button {
       font-size: 14px;
       margin: 0 5px;
     }

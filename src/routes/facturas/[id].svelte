@@ -1,7 +1,7 @@
 <script>
   import { fade } from "svelte/transition";
   import { stores, goto } from "@sapper/app";
-  import { bills, userData, products } from "../../lib/stores";
+  import { bills, userData, products, budgets } from "../../lib/stores";
   import { POST, roundWithTwoDecimals, numerationFormat } from "../../lib/functions";
   import AutoComplete from "simple-svelte-autocomplete";
 
@@ -9,6 +9,7 @@
   let billData = $bills.filter((bill) => bill._id === $page.params.id)[0];
   let lineData = {};
   let loading = false;
+  let action = "";
 
   async function downloadBill() {
     loading = true;
@@ -50,8 +51,35 @@
     }
   }
 
-  function generateDelivery() {
-    console.log("Generating...");
+  function generateBudget() {
+    const check = confirm("¿Quieres crear un presupuesto a partir de esta factura?");
+
+    if (!check) return;
+
+    const number = $budgets.length + 1;
+    const budget = { ...billData };
+    const budgetExists = $budgets.some((b) => b._id === budget._id);
+
+    if (budgetExists) {
+      const check = confirm("Ya se ha creado un presupuesto a partir de esta factura\n\n¿Quieres abrirla?");
+
+      if (!check) return;
+
+      return goto(`/presupuestos/${budget._id}`);
+    }
+
+    budget.number = number;
+
+    $budgets = [...$budgets, budget];
+    $userData._updated = new Date();
+    action = "";
+
+    goto("/presupuestos");
+  }
+
+  function duplicateBill() {
+    alert("🤝 Proximamente");
+    action = "";
   }
 
   function deleteBill() {
@@ -63,6 +91,15 @@
       $userData._updated = new Date();
       goto("/facturas");
     }
+
+    action = "";
+  }
+
+  function evalAction() {
+    if (!action) return;
+    if (action === "budget") generateBudget();
+    if (action === "duplicate") duplicateBill();
+    if (action === "delete") deleteBill();
   }
 
   function calcLineTotal(item) {
@@ -186,17 +223,17 @@
       </p>
 
       <div class="io-wrapper row jcenter xfill">
-        <button class="succ semi" on:click={downloadBill}>DESCARGAR FACTURA</button>
-        <select class="out semi">
-          <option value="" disabled selected>OTRAS ACCIONES</option>
-          <option value="">CREAR PRESUPUESTO</option>
-          <option value="">CREAR ALBARÁN</option>
-          <option value="">DUPLICAR FACTURA</option>
-          <option value="">BORRAR FACTURA</option>
+        <button class="succ semi" on:click={downloadBill}>DESCARGAR</button>
+
+        <select class="out semi" bind:value={action} on:change={evalAction}>
+          <option value="">OTRAS ACCIONES</option>
+          <option value="budget">CREAR PRESUPUESTO</option>
+          <option value="duplicate">DUPLICAR</option>
+          <option value="delete">BORRAR</option>
         </select>
       </div>
 
-      <a href="/facturas" class="btn outwhite semi">VOLVER A FACTURAS</a>
+      <a href="/facturas" class="btn outwhite semi">VOLVER</a>
 
       {#if loading}
         <div class="outer-loader col fcenter fill" transition:fade={{ duration: 100 }}>
@@ -295,7 +332,7 @@
               <span class="label row">&nbsp;</span>
             </li>
 
-            {#each billData.items as item}
+            {#each billData.items as item, i}
               <li class="line row xfill">
                 <input type="number" bind:value={item.amount} min="1" class="out" placeholder="CANT" />
                 <input type="text" bind:value={item.label} class="out grow" placeholder="CONCEPTO" />
@@ -309,9 +346,9 @@
 
           <h-div />
 
-          <ul class="total-wrapper row jaround xfill">
+          <ul class="total-wrapper row jevenly xfill">
             <li class="col acenter">
-              <p class="label">Base imponible</p>
+              <p class="label">Base</p>
               <h3>{roundWithTwoDecimals(base_total()).toFixed(2)}{$userData.currency}</h3>
             </li>
 
@@ -327,7 +364,9 @@
               </li>
             {/if}
 
-            <li class="col acenter">
+            <h-div />
+
+            <li class="col acenter grow">
               <p class="label">Total</p>
               <h3>{roundWithTwoDecimals(bill_total()).toFixed(2)}{$userData.currency}</h3>
             </li>
@@ -370,7 +409,7 @@
         </div>
       </div>
 
-      <div class="row jcenter xfill">
+      <div class="last-row row jcenter xfill">
         <button class="succ semi">GUARDAR CAMBIOS</button>
         <a href="/facturas" class="btn out semi">ATRAS</a>
       </div>
@@ -418,6 +457,7 @@
 
       select {
         background: $white;
+        text-align-last: center;
         border-width: 2px;
       }
     }
@@ -484,7 +524,6 @@
     }
 
     input,
-    select,
     textarea {
       font-size: 16px;
       border-bottom: 1px solid $sec;
@@ -562,15 +601,13 @@
       input:nth-of-type(6) {
         cursor: pointer;
         width: 55px;
-        background: $grey;
+        background: $border;
         text-align: center;
-        color: $pri;
         font-weight: bold;
-
-        &:hover {
-          background: $pri;
-          color: $sec;
-        }
+        color: $base;
+        border: 1px solid $border;
+        user-select: none;
+        -webkit-user-drag: none;
       }
 
       input:nth-of-type(3),
@@ -584,7 +621,7 @@
     }
 
     h-div {
-      margin: 40px 0;
+      margin: 20px 0;
     }
 
     .new-line {
@@ -608,16 +645,11 @@
 
     .line-btn {
       cursor: pointer;
-      background: $sec;
+      background: $pri;
+      color: $white;
       text-align: center;
       font-size: 12px;
       padding: 1.3em;
-      transition: 200ms;
-
-      &:hover {
-        background: $pri;
-        color: $white;
-      }
     }
   }
 
@@ -627,22 +659,19 @@
     }
   }
 
-  button {
-    margin-right: 10px;
-
-    @media (max-width: $mobile) {
-      width: 70%;
-      margin-right: 0;
-      margin-bottom: 10px;
-    }
+  .last-row {
+    margin-top: 20px;
   }
 
-  a.btn {
+  button,
+  a.btn,
+  select {
+    margin: 5px;
+
     @media (max-width: $mobile) {
       width: 70%;
+      max-width: 210px;
       text-align: center;
-      margin-right: 0;
-      margin-bottom: 10px;
     }
   }
 </style>

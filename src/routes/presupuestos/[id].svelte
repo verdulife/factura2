@@ -9,6 +9,7 @@
   let budgetData = $budgets.filter((budget) => budget._id === $page.params.id)[0];
   let lineData = {};
   let loading = false;
+  let action = "";
 
   async function downloadBudget() {
     loading = true;
@@ -71,11 +72,18 @@
 
     $bills = [...$bills, bill];
     $userData._updated = new Date();
+    action = "";
+
     goto("/facturas");
   }
 
+  function duplicateBudget() {
+    alert("🤝 Proximamente");
+    action = "";
+  }
+
   function deleteBudget() {
-    const check = comfirm("La numeracion de los otros presupuestos no se modificara. Recuerda usar la numeracion de este presupuesto en otro.\n\n¿Borrar definitivamente?");
+    const check = confirm("La numeracion de los otros presupuestos no se modificara. Recuerda usar la numeracion de este presupuesto en otro.\n\n¿Borrar definitivamente?");
 
     if (check) {
       $budgets.splice($budgets.indexOf(budgetData), 1);
@@ -83,6 +91,15 @@
       $userData._updated = new Date();
       goto("/presupuestos");
     }
+
+    action = "";
+  }
+
+  function evalAction() {
+    if (!action) return;
+    if (action === "bill") generateBill();
+    if (action === "duplicate") duplicateBudget();
+    if (action === "delete") deleteBudget();
   }
 
   function calcLineTotal(item) {
@@ -206,12 +223,17 @@
       </p>
 
       <div class="io-wrapper row jcenter xfill">
-        <button class="succ semi" on:click={downloadBudget}>DESCARGAR PRESUPUESTO</button>
-        <button class="link semi" on:click={generateBill}>GENERAR FACTURA</button>
-        <button class="err semi" on:click={deleteBudget}>ELIMINAR PRESUPUESTO</button>
+        <button class="succ semi" on:click={downloadBudget}>DESCARGAR</button>
+
+        <select class="out semi" bind:value={action} on:change={evalAction}>
+          <option value="">MÁS ACCIONES</option>
+          <option value="bill">CREAR FACTURA</option>
+          <option value="duplicate">DUPLICAR</option>
+          <option value="delete">BORRAR</option>
+        </select>
       </div>
 
-      <a href="/presupuestos" class="btn outwhite semi">VOLVER A PRESUPUESTOS</a>
+      <a href="/presupuestos" class="btn outwhite semi">VOLVER</a>
 
       {#if loading}
         <div class="outer-loader col fcenter fill" transition:fade={{ duration: 100 }}>
@@ -324,9 +346,9 @@
 
           <h-div />
 
-          <ul class="total-wrapper row jaround xfill">
+          <ul class="total-wrapper row jevenly xfill">
             <li class="col acenter">
-              <p class="label">Base imponible</p>
+              <p class="label">Base</p>
               <h3>{roundWithTwoDecimals(base_total()).toFixed(2)}{$userData.currency}</h3>
             </li>
 
@@ -342,7 +364,9 @@
               </li>
             {/if}
 
-            <li class="col acenter">
+            <h-div />
+
+            <li class="col acenter grow">
               <p class="label">Total</p>
               <h3>{roundWithTwoDecimals(budget_total()).toFixed(2)}{$userData.currency}</h3>
             </li>
@@ -386,7 +410,7 @@
         </div>
       </div>
 
-      <div class="row jcenter xfill">
+      <div class="last-row row jcenter xfill">
         <button class="succ semi">GUARDAR CAMBIOS</button>
         <a href="/presupuestos" class="btn out semi">ATRAS</a>
       </div>
@@ -431,6 +455,12 @@
     .io-wrapper {
       font-size: 12px;
       margin-bottom: 20px;
+
+      select {
+        background: $white;
+        text-align-last: center;
+        border-width: 2px;
+      }
     }
 
     a.btn {
@@ -495,7 +525,6 @@
     }
 
     input,
-    select,
     textarea {
       font-size: 16px;
       border-bottom: 1px solid $sec;
@@ -529,7 +558,7 @@
       @media (max-width: $mobile) {
         margin-bottom: 10px;
       }
-      
+
       &:nth-of-type(even) {
         background: $bg;
         margin-top: -1px;
@@ -574,15 +603,13 @@
       input:nth-of-type(6) {
         cursor: pointer;
         width: 55px;
-        background: $grey;
+        background: $border;
         text-align: center;
-        color: $pri;
         font-weight: bold;
-
-        &:hover {
-          background: $pri;
-          color: $sec;
-        }
+        color: $base;
+        border: 1px solid $border;
+        user-select: none;
+        -webkit-user-drag: none;
       }
 
       input:nth-of-type(3),
@@ -596,7 +623,7 @@
     }
 
     h-div {
-      margin: 40px 0;
+      margin: 20px 0;
     }
 
     .new-line {
@@ -620,16 +647,11 @@
 
     .line-btn {
       cursor: pointer;
-      background: $sec;
+      background: $pri;
+      color: $white;
       text-align: center;
       font-size: 12px;
       padding: 1.3em;
-      transition: 200ms;
-
-      &:hover {
-        background: $pri;
-        color: $white;
-      }
     }
   }
 
@@ -639,22 +661,19 @@
     }
   }
 
-  button {
-    margin-right: 10px;
-
-    @media (max-width: $mobile) {
-      width: 70%;
-      margin-right: 0;
-      margin-bottom: 10px;
-    }
+  .last-row {
+    margin-top: 20px;
   }
 
-  a.btn {
+  button,
+  a.btn,
+  select {
+    margin: 5px;
+
     @media (max-width: $mobile) {
       width: 70%;
+      max-width: 210px;
       text-align: center;
-      margin-right: 0;
-      margin-bottom: 10px;
     }
   }
 </style>

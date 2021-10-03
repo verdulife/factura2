@@ -167,7 +167,7 @@
   <section class="header col fcenter xfill">
     <img src="/presupuestos.svg" alt="Presupuestos" />
     <h1>Nuevo presupuesto</h1>
-    <a href="/presupuestos" class="btn outwhite semi">VOLVER A PRESUPUESTOS</a>
+    <a href="/presupuestos" class="btn outwhite semi">VOLVER A PPTOS</a>
   </section>
 
   <form class="budget-data col acenter xfill" on:submit|preventDefault={pushBudget}>
@@ -280,9 +280,9 @@
 
         <h-div />
 
-        <ul class="total-wrapper row jaround xfill">
+        <ul class="total-wrapper row jevenly xfill">
           <li class="col acenter">
-            <p class="label">Base imponible</p>
+            <p class="label">Base</p>
             <h3>{roundWithTwoDecimals(base_total()).toFixed(2)}{$userData.currency}</h3>
           </li>
 
@@ -298,7 +298,9 @@
             </li>
           {/if}
 
-          <li class="col acenter">
+          <h-div />
+
+          <li class="col acenter grow">
             <p class="label">Total</p>
             <h3>{roundWithTwoDecimals(bill_total()).toFixed(2)}{$userData.currency}</h3>
           </li>
@@ -342,8 +344,8 @@
       </div>
     </div>
 
-    <div class="row jcenter xfill">
-      <button class="succ semi">GENERAR PRESUPUESTO</button>
+    <div class="last-row row jcenter xfill">
+      <button class="succ semi">GENERAR PPTO</button>
       <a href="/presupuestos" class="btn out semi">CANCELAR</a>
     </div>
   </form>
@@ -416,10 +418,6 @@
       }
     }
 
-    .select-user {
-      border: 1px solid $border;
-    }
-
     label {
       text-transform: uppercase;
       color: $pri;
@@ -428,7 +426,6 @@
     }
 
     input,
-    select,
     textarea {
       font-size: 16px;
       border-bottom: 1px solid $sec;
@@ -507,15 +504,13 @@
       input:nth-of-type(6) {
         cursor: pointer;
         width: 55px;
-        background: $grey;
+        background: $border;
         text-align: center;
-        color: $pri;
         font-weight: bold;
-
-        &:hover {
-          background: $pri;
-          color: $sec;
-        }
+        color: $base;
+        border: 1px solid $border;
+        user-select: none;
+        -webkit-user-drag: none;
       }
 
       input:nth-of-type(3),
@@ -529,7 +524,7 @@
     }
 
     h-div {
-      margin: 40px 0;
+      margin: 20px 0;
     }
 
     .new-line {
@@ -553,16 +548,11 @@
 
     .line-btn {
       cursor: pointer;
-      background: $sec;
+      background: $pri;
+      color: $white;
       text-align: center;
       font-size: 12px;
       padding: 1.3em;
-      transition: 200ms;
-
-      &:hover {
-        background: $pri;
-        color: $white;
-      }
     }
   }
 
@@ -572,22 +562,18 @@
     }
   }
 
-  button {
-    margin-right: 10px;
-
-    @media (max-width: $mobile) {
-      width: 70%;
-      margin-right: 0;
-      margin-bottom: 10px;
-    }
+  .last-row {
+    margin-top: 10px;
   }
 
+  button,
   a.btn {
+    margin: 5px;
+
     @media (max-width: $mobile) {
       width: 70%;
+      max-width: 210px;
       text-align: center;
-      margin-right: 0;
-      margin-bottom: 10px;
     }
   }
 </style>

@@ -209,8 +209,7 @@
       padding: 0 15px;
     }
 
-    input,
-    select {
+    input {
       font-size: 16px;
       border-bottom: 1px solid $sec;
       border-radius: 0;

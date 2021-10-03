@@ -4,6 +4,17 @@
 
   const { page } = stores();
   let clientData = $clients.filter((client) => client._id === $page.params.id)[0];
+  let action = "";
+
+  function generateBill() {
+    action = "";
+    goto(`/facturas/nueva?client=${encodeURIComponent(JSON.stringify(clientData))}`);
+  }
+
+  function generateBudget() {
+    action = "";
+    goto(`/presupuestos/nueva?client=${encodeURIComponent(JSON.stringify(clientData))}`);
+  }
 
   function deleteClient() {
     const check = confirm("¿Borrar definitivamente?");
@@ -13,7 +24,16 @@
     $clients.splice($clients.indexOf(clientData), 1);
     $clients = $clients;
     $userData._updated = new Date();
+    action = "";
+
     goto("/clients");
+  }
+
+  function evalAction() {
+    if (!action) return;
+    if (action === "bill") generateBill();
+    if (action === "budget") generateBudget();
+    if (action === "delete") deleteClient();
   }
 
   function pushClient() {
@@ -54,12 +74,15 @@
       </p>
 
       <div class="io-wrapper row jcenter xfill">
-        <a href="/facturas/nueva?client={encodeURIComponent(JSON.stringify(clientData))}" class="btn link semi">GENERAR FACTURA</a>
-        <a href="/presupuestos/nueva?client={encodeURIComponent(JSON.stringify(clientData))}" class="btn link semi">GENERAR PRESUPUESTO</a>
-        <button class="err semi" on:click={deleteClient}>ELIMINAR CLIENTE</button>
+        <select class="out semi" bind:value={action} on:change={evalAction}>
+          <option value="">ACCIONES</option>
+          <option value="bill">CREAR FACTURA</option>
+          <option value="budget">CREAT PRESUPUESTO</option>
+          <option value="delete">BORRAR</option>
+        </select>
       </div>
 
-      <a href="/clientes" class="btn outwhite semi">VOLVER A CLIENTES</a>
+      <a href="/clientes" class="btn outwhite semi">VOLVER</a>
     </section>
 
     <form class="client-data col acenter xfill" on:submit|preventDefault={pushClient}>
@@ -109,7 +132,7 @@
         </div>
       </div>
 
-      <div class="row jcenter xfill">
+      <div class="last-row row jcenter xfill">
         <button class="succ semi">GUARDAR CAMBIOS</button>
         <a href="/clientes" class="btn out semi">ATRAS</a>
       </div>
@@ -153,7 +176,12 @@
 
     .io-wrapper {
       font-size: 12px;
-      margin-bottom: 20px;
+
+      select {
+        background: $white;
+        text-align-last: center;
+        border-width: 2px;
+      }
     }
 
     a.btn {
@@ -203,8 +231,7 @@
       padding: 0 15px;
     }
 
-    input,
-    select {
+    input {
       font-size: 16px;
       border-bottom: 1px solid $sec;
       border-radius: 0;
@@ -219,23 +246,19 @@
     }
   }
 
-  button,
-  a.btn {
-    margin-right: 10px;
-
-    @media (max-width: $mobile) {
-      width: 70%;
-      margin-right: 0;
-      margin-bottom: 10px;
-    }
+  .last-row {
+    margin-top: 20px;
   }
 
-  a.btn {
+  button,
+  a.btn,
+  select {
+    margin: 5px;
+
     @media (max-width: $mobile) {
       width: 70%;
+      max-width: 210px;
       text-align: center;
-      margin-right: 0;
-      margin-bottom: 10px;
     }
   }
 </style>
